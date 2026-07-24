@@ -93,7 +93,8 @@ button { color: inherit; }
 .stage-vs { position: absolute; z-index: 5; top: 48%; left: 51%; width: 54px; height: 54px; display: grid; place-items: center; background: var(--text); color: var(--bg); border-radius: 50%; font-family: Impact, sans-serif; font-size: 18px; transform: translate(-50%, -50%) rotate(-5deg); }
 .stage-year { position: absolute; top: 18px; right: -38px; color: var(--muted); font-family: Impact, sans-serif; font-size: 32px; line-height: .8; }
 .ticker { position: absolute; z-index: 3; bottom: 0; left: -3%; width: 106%; padding: 13px 0; overflow: hidden; background: var(--text); color: var(--bg); transform: rotate(-1deg); white-space: nowrap; }
-.ticker div { display: flex; width: max-content; align-items: center; gap: 33px; font-size: 11px; font-weight: 950; letter-spacing: .12em; animation: ticker 26s linear infinite; }
+.ticker-track { display: flex; width: max-content; font-size: 11px; font-weight: 950; letter-spacing: .12em; animation: ticker 26s linear infinite; }
+.ticker-group { display: flex; flex: none; align-items: center; gap: 33px; padding-right: 33px; }
 .ticker i { color: var(--valorant); font-style: normal; }
 @keyframes ticker { to { transform: translateX(-50%); } }
 

@@ -317,7 +317,18 @@ export default function Home() {
             <div className="stage-year">20<br />26</div>
           </div>
         </div>
-        <div className="ticker" aria-hidden="true"><div><span>LEAGUE OF LEGENDS</span><i>✦</i><span>VALORANT</span><i>✦</i><span>COMMUNITY CUP</span><i>✦</i><span>LIVE ON TWITCH</span><i>✦</i><span>LEAGUE OF LEGENDS</span><i>✦</i><span>VALORANT</span><i>✦</i></div></div>
+        <div className="ticker" aria-hidden="true">
+          <div className="ticker-track">
+            {[0, 1].map((copyIndex) => (
+              <span className="ticker-group" key={copyIndex}>
+                <span>LEAGUE OF LEGENDS</span><i>✦</i>
+                <span>VALORANT</span><i>✦</i>
+                <span>COMMUNITY CUP</span><i>✦</i>
+                <span>LIVE ON TWITCH</span><i>✦</i>
+              </span>
+            ))}
+          </div>
+        </div>
       </section>
 
       <section className="events section" id="events">
