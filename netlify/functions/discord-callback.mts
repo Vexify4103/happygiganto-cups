@@ -3,7 +3,9 @@ import {
   clearCookie,
   createSessionToken,
   discordConfig,
+  OAUTH_RETURN_COOKIE,
   OAUTH_STATE_COOKIE,
+  oauthReturnLocation,
   readCookie,
   secureCookie,
   SESSION_COOKIE,
@@ -21,15 +23,23 @@ const handler = async (request: Request) => {
   const code = requestUrl.searchParams.get("code");
   const state = requestUrl.searchParams.get("state");
   const expectedState = readCookie(request, OAUTH_STATE_COOKIE);
+  const returnLocation = oauthReturnLocation(readCookie(request, OAUTH_RETURN_COOKIE));
   const isSecure = requestUrl.protocol === "https:";
 
   if (!code || !state || !expectedState || state !== expectedState) {
+    const errorLocation = returnLocation === "/admin/"
+      ? "/admin/?auth=invalid-state"
+      : returnLocation === "/me/"
+        ? "/me/?auth=invalid-state"
+        : "/?auth=invalid-state#apply";
+    const headers = new Headers({
+      Location: errorLocation,
+    });
+    headers.append("Set-Cookie", clearCookie(OAUTH_STATE_COOKIE, isSecure));
+    headers.append("Set-Cookie", clearCookie(OAUTH_RETURN_COOKIE, isSecure));
     return new Response(null, {
       status: 302,
-      headers: {
-        Location: "/?auth=invalid-state#apply",
-        "Set-Cookie": clearCookie(OAUTH_STATE_COOKIE, isSecure),
-      },
+      headers,
     });
   }
 
@@ -63,19 +73,27 @@ const handler = async (request: Request) => {
     });
 
     const headers = new Headers({
-      Location: "/#apply",
+      Location: returnLocation,
       "Cache-Control": "no-store",
     });
     headers.append("Set-Cookie", secureCookie(SESSION_COOKIE, session, 60 * 60 * 24 * 7, isSecure));
     headers.append("Set-Cookie", clearCookie(OAUTH_STATE_COOKIE, isSecure));
+    headers.append("Set-Cookie", clearCookie(OAUTH_RETURN_COOKIE, isSecure));
     return new Response(null, { status: 302, headers });
   } catch {
+    const errorLocation = returnLocation === "/admin/"
+      ? "/admin/?auth=discord-error"
+      : returnLocation === "/me/"
+        ? "/me/?auth=discord-error"
+        : "/?auth=discord-error#apply";
+    const headers = new Headers({
+      Location: errorLocation,
+    });
+    headers.append("Set-Cookie", clearCookie(OAUTH_STATE_COOKIE, isSecure));
+    headers.append("Set-Cookie", clearCookie(OAUTH_RETURN_COOKIE, isSecure));
     return new Response(null, {
       status: 302,
-      headers: {
-        Location: "/?auth=discord-error#apply",
-        "Set-Cookie": clearCookie(OAUTH_STATE_COOKIE, isSecure),
-      },
+      headers,
     });
   }
 };
@@ -83,6 +101,6 @@ const handler = async (request: Request) => {
 export default handler;
 
 export const config: Config = {
-  path: "/api/auth/discord/callback",
+  path: ["/api/auth/discord/callback", "/api/auth/discord/callback/"],
   method: "GET",
 };

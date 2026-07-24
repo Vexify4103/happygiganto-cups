@@ -52,6 +52,9 @@ button { color: inherit; }
 .main-nav > a:hover { color: var(--text); }
 .nav-cta { padding: 12px 17px; background: var(--text); color: var(--bg); }
 .header-tools { display: flex; align-items: center; gap: 10px; }
+.discord-account-link { height: 38px; max-width: 180px; padding: 0 12px; display: inline-flex; align-items: center; gap: 8px; background: #5865f2; color: white; font-size: 9px; font-weight: 900; letter-spacing: .04em; text-transform: uppercase; }
+.discord-account-link img { width: 18px; height: auto; flex: 0 0 auto; }
+.discord-account-link span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .language-toggle, .theme-toggle, .menu-toggle { border: 1px solid var(--line); background: transparent; cursor: pointer; }
 .language-toggle { height: 38px; display: flex; align-items: center; gap: 7px; padding: 0 11px; color: var(--muted); font-size: 10px; font-weight: 850; }
 .language-toggle i { display: block; width: 1px; height: 13px; background: var(--line-strong); }
@@ -93,10 +96,13 @@ button { color: inherit; }
 .stage-vs { position: absolute; z-index: 5; top: 48%; left: 51%; width: 54px; height: 54px; display: grid; place-items: center; background: var(--text); color: var(--bg); border-radius: 50%; font-family: Impact, sans-serif; font-size: 18px; transform: translate(-50%, -50%) rotate(-5deg); }
 .stage-year { position: absolute; top: 18px; right: -38px; color: var(--muted); font-family: Impact, sans-serif; font-size: 32px; line-height: .8; }
 .ticker { position: absolute; z-index: 3; bottom: 0; left: -3%; width: 106%; padding: 13px 0; overflow: hidden; background: var(--text); color: var(--bg); transform: rotate(-1deg); white-space: nowrap; }
-.ticker-track { display: flex; width: max-content; font-size: 11px; font-weight: 950; letter-spacing: .12em; animation: ticker 26s linear infinite; }
-.ticker-group { display: flex; flex: none; align-items: center; gap: 33px; padding-right: 33px; }
+.ticker-track { display: flex; width: max-content; font-size: 11px; font-weight: 950; letter-spacing: .12em; animation: ticker 26s linear infinite; will-change: transform; }
+.ticker-group { min-width: 100vw; display: flex; flex: none; align-items: center; justify-content: space-around; gap: 33px; padding: 0 33px; }
 .ticker i { color: var(--valorant); font-style: normal; }
-@keyframes ticker { to { transform: translateX(-50%); } }
+@keyframes ticker {
+  from { transform: translateX(-50%); }
+  to { transform: translateX(0); }
+}
 
 .section-heading { max-width: 670px; margin-bottom: 55px; }
 .section-heading h2, .application-copy h2 { font-size: clamp(48px, 6vw, 82px); line-height: .95; }
@@ -204,7 +210,6 @@ button { color: inherit; }
 .application-dates small { color: var(--muted); font-size: 7px; letter-spacing: .07em; }
 .application-form { padding: 45px; border: 1px solid var(--line); background: var(--bg); box-shadow: var(--shadow); }
 .hidden-field { position: absolute; left: -9999px; }
-.netlify-detection-form { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); border: 0; white-space: nowrap; }
 .application-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
 .application-fields:disabled { opacity: .42; }
 .discord-auth-card { margin-bottom: 28px; padding: 18px; display: grid; grid-template-columns: 52px 1fr auto; gap: 15px; align-items: center; border: 1px solid color-mix(in srgb, var(--violet) 55%, var(--line)); background: color-mix(in srgb, var(--violet) 9%, var(--surface)); }
@@ -216,7 +221,8 @@ button { color: inherit; }
 .discord-auth-card.is-verified .discord-auth-copy > span { color: var(--green); }
 .discord-auth-copy strong { font-size: 12px; }
 .discord-auth-copy small { max-width: 320px; margin-top: 4px; color: var(--muted); font-size: 9px; line-height: 1.45; }
-.discord-login { min-height: 38px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: var(--violet); color: white; font-size: 9px; font-weight: 900; letter-spacing: .05em; text-align: center; text-transform: uppercase; }
+.discord-login { min-height: 38px; padding: 0 13px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #5865f2; color: white; font-size: 9px; font-weight: 900; letter-spacing: .05em; text-align: center; text-transform: uppercase; }
+.discord-login img { width: 18px; height: auto; }
 .discord-login.secondary { border: 1px solid var(--line-strong); background: transparent; color: var(--muted); }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
 .application-form label { display: block; margin-bottom: 22px; }
@@ -267,16 +273,22 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
 .admin-header > div { display: flex; align-items: center; gap: 22px; color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
 .admin-header a:hover { color: var(--text); }
 .admin-private { padding: 7px 10px; border: 1px solid var(--valorant); color: var(--valorant); }
+.admin-gate { width: min(720px, calc(100% - 40px)); min-height: calc(100vh - 74px); margin: 0 auto; padding: 100px 0; display: flex; flex-direction: column; align-items: flex-start; justify-content: center; }
+.admin-gate h1 { max-width: 700px; margin: 0; font-family: Impact, sans-serif; font-size: clamp(58px, 8vw, 108px); line-height: .88; }
+.admin-gate > p:not(.section-kicker) { max-width: 600px; margin: 28px 0 32px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.admin-gate .button { width: auto; }
 .admin-shell { width: min(1320px, calc(100% - 48px)); margin: 0 auto; padding: 80px 0; }
 .admin-intro { display: grid; grid-template-columns: 1.1fr .9fr; gap: 80px; align-items: end; }
 .admin-intro h1 { margin: 0; font-family: Impact, sans-serif; font-size: clamp(58px, 7vw, 102px); line-height: .86; }
 .admin-intro > div:first-child > p:last-child { max-width: 640px; margin: 28px 0 0; color: var(--muted); line-height: 1.7; }
 .admin-actions { padding: 30px; border: 1px solid var(--line); background: var(--surface); }
-.admin-actions input[type="file"] { position: absolute; left: -9999px; }
+.admin-account-label { display: block; margin-bottom: 8px; color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .13em; }
+.admin-actions > strong { display: block; color: var(--text); font-size: 20px; }
+.admin-actions > small { display: block; margin: 5px 0 20px; color: var(--muted); font-size: 10px; }
 .admin-actions .button { width: 100%; margin-top: 10px; cursor: pointer; }
 .admin-actions .button:first-of-type { margin-top: 0; }
 .admin-actions .button:disabled { opacity: .45; cursor: not-allowed; }
-.admin-actions > p { margin: 15px 0 0; color: var(--green); font-size: 11px; text-align: center; }
+.admin-logout { display: block; margin-top: 17px; color: var(--muted); font-size: 10px; text-align: center; text-decoration: underline; }
 .admin-stats { margin: 60px 0 24px; display: grid; grid-template-columns: repeat(4, 1fr); border-top: 1px solid var(--line); border-left: 1px solid var(--line); }
 .admin-stats article { min-height: 122px; padding: 22px; display: flex; align-items: end; justify-content: space-between; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); background: var(--surface); }
 .admin-stats span { color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .13em; }
@@ -285,14 +297,16 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
 .admin-toolbar .teams-game-switch { margin: 0; }
 .admin-toolbar input { width: min(410px, 100%); height: 44px; padding: 0 14px; border: 1px solid var(--line); outline: 0; background: var(--surface); color: var(--text); }
 .admin-toolbar input:focus { border-color: var(--valorant); }
+.admin-error { margin: 0 0 14px; padding: 12px 14px; border: 1px solid var(--valorant); color: var(--valorant); font-size: 11px; }
 .admin-table-wrap { overflow-x: auto; border: 1px solid var(--line); background: var(--surface); }
-.admin-table { width: 100%; min-width: 960px; border-collapse: collapse; }
+.admin-table { width: 100%; min-width: 1280px; border-collapse: collapse; }
 .admin-table th { padding: 14px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 9px; letter-spacing: .12em; text-align: left; text-transform: uppercase; }
 .admin-table td { padding: 16px 18px; border-bottom: 1px solid var(--line); color: var(--muted); font-size: 12px; }
 .admin-table tr:last-child td { border-bottom: 0; }
 .admin-table strong, .admin-table small { display: block; }
 .admin-table strong { color: var(--text); font-size: 13px; }
 .admin-table small { margin-top: 3px; color: var(--muted); font-size: 9px; }
+.admin-notes { max-width: 260px; white-space: pre-wrap; line-height: 1.55; }
 .admin-table select { min-width: 126px; height: 38px; padding: 0 9px; border: 1px solid var(--line-strong); outline: 0; background: var(--bg); color: var(--text); }
 .admin-table select:focus { border-color: var(--valorant); }
 .admin-empty { min-height: 250px; display: grid; place-items: center; align-content: center; padding: 40px; color: var(--muted); text-align: center; }
@@ -303,6 +317,35 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
 .admin-footnote p { margin: 0; }
 .admin-footnote button { border: 0; background: none; color: var(--valorant); cursor: pointer; font-size: 10px; text-decoration: underline; }
 .admin-footnote button:disabled { color: var(--muted); cursor: not-allowed; }
+
+.account-page { min-height: 100vh; background: radial-gradient(circle at 78% 30%, color-mix(in srgb, #5865f2 16%, transparent), transparent 32%), var(--bg); }
+.account-header { min-height: 74px; padding: 14px max(24px, calc((100vw - 1320px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: var(--header-bg); backdrop-filter: blur(18px); }
+.account-header-tools { display: flex; align-items: center; gap: 18px; }
+.account-header-tools > a { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+.account-header-tools > a:hover { color: var(--text); }
+.account-shell { width: min(760px, calc(100% - 40px)); margin: 0 auto; padding: 100px 0 120px; }
+.account-intro h1 { margin: 0; font-family: Impact, Haettenschweiler, "Arial Narrow Bold", sans-serif; font-size: clamp(58px, 10vw, 104px); line-height: .88; text-transform: uppercase; }
+.account-intro > p:last-child { max-width: 620px; margin: 28px 0 42px; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.account-loading { min-height: 190px; display: grid; place-items: center; align-content: center; gap: 15px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); font-size: 11px; }
+.account-loading span { width: 24px; height: 24px; border: 2px solid var(--line-strong); border-top-color: #5865f2; border-radius: 50%; animation: account-spin .7s linear infinite; }
+.account-loading p { margin: 0; }
+@keyframes account-spin { to { transform: rotate(360deg); } }
+.account-error { margin: 0 0 20px; padding: 14px 16px; border: 1px solid var(--valorant); background: color-mix(in srgb, var(--valorant) 8%, var(--surface)); color: var(--valorant); font-size: 11px; line-height: 1.6; }
+.discord-connect-button { min-height: 58px; width: fit-content; padding: 0 22px; display: inline-flex; align-items: center; gap: 13px; background: #5865f2; color: white; font-size: 11px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; transition: transform .2s ease, background .2s ease; }
+.discord-connect-button:hover { background: #4752c4; transform: translateY(-2px); }
+.discord-connect-button img { width: 25px; height: auto; }
+.account-card { padding: 34px; display: grid; grid-template-columns: 86px 1fr; gap: 26px; border: 1px solid color-mix(in srgb, #5865f2 42%, var(--line)); background: var(--surface); box-shadow: var(--shadow); }
+.account-avatar { width: 86px; height: 86px; display: grid; place-items: center; border: 3px solid #5865f2; border-radius: 50%; background: #5865f2 center / cover no-repeat; color: white; font-size: 30px; font-weight: 900; }
+.account-identity { align-self: center; min-width: 0; }
+.account-identity span { display: block; margin-bottom: 7px; color: var(--green); font-size: 9px; font-weight: 900; letter-spacing: .13em; text-transform: uppercase; }
+.account-identity strong { display: block; overflow: hidden; color: var(--text); font-size: 27px; text-overflow: ellipsis; white-space: nowrap; }
+.account-identity small { color: var(--muted); }
+.account-details { grid-column: 1 / -1; margin: 10px 0 0; border-top: 1px solid var(--line); }
+.account-details div { min-height: 56px; padding: 13px 0; display: grid; grid-template-columns: 145px 1fr; align-items: center; border-bottom: 1px solid var(--line); }
+.account-details dt { color: var(--muted); font-size: 9px; font-weight: 900; letter-spacing: .12em; text-transform: uppercase; }
+.account-details dd { margin: 0; overflow-wrap: anywhere; color: var(--text); font-size: 12px; }
+.account-actions { grid-column: 1 / -1; display: flex; gap: 10px; flex-wrap: wrap; }
+.account-actions .button { min-width: 180px; }
 
 .legal-page { min-height: 100vh; background: var(--bg); }
 .legal-header { min-height: 74px; padding: 14px max(24px, calc((100vw - 1320px) / 2)); display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid var(--line); background: var(--header-bg); backdrop-filter: blur(18px); }
@@ -337,6 +380,8 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
 .legal-source { display: inline-flex; margin-top: 9px; padding-bottom: 4px; border-bottom: 1px solid var(--valorant); color: var(--valorant); font-size: 10px; font-weight: 900; letter-spacing: .05em; text-transform: uppercase; }
 
 @media (max-width: 1050px) {
+  .discord-account-link { width: 38px; padding: 0; justify-content: center; }
+  .discord-account-link span { display: none; }
   .main-nav { gap: 19px; }
   .hero-inner { grid-template-columns: 1fr .9fr; gap: 30px; }
   .hero-stage { transform: scale(.86); transform-origin: center right; }
@@ -412,6 +457,16 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
   .admin-header .brand-type, .admin-private { display: none; }
   .admin-stats { grid-template-columns: 1fr; }
   .admin-footnote { align-items: flex-start; flex-direction: column; }
+  .account-header { padding-inline: 16px; }
+  .account-header-tools { gap: 10px; }
+  .account-header-tools > a { display: none; }
+  .account-shell { padding-top: 70px; }
+  .account-card { padding: 26px 22px; grid-template-columns: 66px 1fr; gap: 18px; }
+  .account-avatar { width: 66px; height: 66px; }
+  .account-identity strong { font-size: 21px; }
+  .account-details div { grid-template-columns: 1fr; gap: 5px; }
+  .account-actions { flex-direction: column; }
+  .account-actions .button { width: 100%; }
   .legal-header .brand-type { display: none; }
   .legal-header { padding-inline: 16px; }
   .legal-back { display: none; }

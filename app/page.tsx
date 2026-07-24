@@ -16,6 +16,8 @@ type DiscordUser = {
 const copy = {
   de: {
     nav: { events: "Turniere", schedule: "Ablauf", rules: "Regeln", teams: "Teams", apply: "Anmelden" },
+    account: "Konto",
+    discordNavLogin: "Discord Login",
     eyebrow: "HAPPYGIGANTO PRESENTS",
     headlineA: "ZWEI GAMES.",
     headlineB: "EINE COMMUNITY.",
@@ -77,6 +79,7 @@ const copy = {
     discordUnavailable: "Discord-Login funktioniert in der veröffentlichten Netlify-Version.",
     authError: "Discord-Anmeldung fehlgeschlagen. Bitte versuche es erneut.",
     submitError: "Die Anmeldung konnte nicht gespeichert werden. Bitte versuche es erneut.",
+    duplicateError: "Du hast dich für dieses Turnier bereits angemeldet.",
     playerPlaceholder: "Dein Ingame- oder Community-Name", riotPlaceholder: "RiotName#TAG",
     contactPlaceholder: "mail@beispiel.de",
     rankPlaceholder: "z. B. Gold 2",
@@ -89,6 +92,8 @@ const copy = {
   },
   en: {
     nav: { events: "Tournaments", schedule: "How it works", rules: "Rules", teams: "Teams", apply: "Register" },
+    account: "Account",
+    discordNavLogin: "Discord Login",
     eyebrow: "HAPPYGIGANTO PRESENTS",
     headlineA: "TWO GAMES.",
     headlineB: "ONE COMMUNITY.",
@@ -150,6 +155,7 @@ const copy = {
     discordUnavailable: "Discord login works on the published Netlify version.",
     authError: "Discord sign-in failed. Please try again.",
     submitError: "Your application could not be saved. Please try again.",
+    duplicateError: "You have already registered for this tournament.",
     playerPlaceholder: "Your in-game or community name", riotPlaceholder: "RiotName#TAG",
     contactPlaceholder: "mail@example.com",
     rankPlaceholder: "e.g. Gold 2",
@@ -245,7 +251,7 @@ export default function Home() {
     setMenuOpen(false);
   }
 
-  function handleSubmit(event: FormEvent<HTMLFormElement>) {
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!discordUser) {
       setFormError(t.authError);
@@ -256,17 +262,23 @@ export default function Home() {
     setFormError("");
     const form = event.currentTarget;
     const formData = new FormData(form);
-    fetch("/api/apply", {
-      method: "POST",
-      credentials: "same-origin",
-      body: formData,
-    }).then(async (response) => {
-      if (!response.ok) throw new Error((await response.json() as { error?: string }).error || "Submission failed");
+    try {
+      const response = await fetch("/api/apply", {
+        method: "POST",
+        credentials: "same-origin",
+        body: formData,
+      });
+      if (response.status === 409) {
+        setSubmitting(false);
+        setFormError(t.duplicateError);
+        return;
+      }
+      if (!response.ok) throw new Error("Submission failed");
       window.location.href = "/danke/";
-    }).catch(() => {
+    } catch {
       setSubmitting(false);
       setFormError(t.submitError);
-    });
+    }
   }
 
   return (
@@ -284,6 +296,14 @@ export default function Home() {
           <a className="nav-cta" href="#apply" onClick={() => setMenuOpen(false)}>{t.nav.apply}</a>
         </nav>
         <div className="header-tools">
+          <a
+            className="discord-account-link"
+            href={discordUser ? "/me/" : "/api/auth/discord/login?returnTo=%2Fme%2F"}
+            aria-label={discordUser ? t.account : t.discordNavLogin}
+          >
+            <Image src="/discord-symbol.svg" alt="" width={18} height={14} />
+            <span>{discordUser ? (discordUser.globalName || discordUser.username) : t.discordNavLogin}</span>
+          </a>
           <button className="language-toggle" type="button" onClick={toggleLanguage} aria-label={t.language}>
             <span className={language === "de" ? "active" : ""}>DE</span><i /><span className={language === "en" ? "active" : ""}>EN</span>
           </button>
@@ -400,11 +420,6 @@ export default function Home() {
         <div className="container application-grid">
           <div className="application-copy"><p className="section-kicker">{t.formEyebrow}</p><h2>{t.formTitle}</h2><p>{t.formIntro}</p><div className="application-dates"><div><span>22</span><div><strong>AUG</strong><small>LEAGUE OF LEGENDS</small></div></div><div><span>01</span><div><strong>SEP</strong><small>VALORANT</small></div></div></div></div>
           <form className="application-form" method="POST" action="/api/apply" onSubmit={handleSubmit}>
-            <input type="hidden" name="form-name" value="solo-registration" />
-            <input type="hidden" name="discord-id" value="" />
-            <input type="hidden" name="discord-username" value="" />
-            <input type="hidden" name="discord-display-name" value="" />
-            <input type="hidden" name="discord-verified" value="" />
             <p className="hidden-field"><label>Don’t fill this out: <input name="bot-field" /></label></p>
             <div className={`discord-auth-card ${discordUser ? "is-verified" : ""}`}>
               <div
@@ -429,7 +444,10 @@ export default function Home() {
               {!authLoading && (discordUser ? (
                 <a className="discord-login secondary" href="/api/auth/discord/logout">{t.logoutDiscord}</a>
               ) : (
-                <a className="discord-login" href="/api/auth/discord/login">{t.loginDiscord}<span>↗</span></a>
+                <a className="discord-login" href="/api/auth/discord/login">
+                  <Image src="/discord-symbol.svg" alt="" width={18} height={14} />
+                  {t.loginDiscord}<span>↗</span>
+                </a>
               ))}
             </div>
             <fieldset className="application-fields" disabled={!discordUser || submitting}>
@@ -471,25 +489,6 @@ export default function Home() {
           </form>
         </div>
       </section>
-
-      <form className="netlify-detection-form" name="solo-registration" method="POST" data-netlify="true" data-netlify-honeypot="bot-field" aria-hidden="true">
-        <input type="hidden" name="form-name" value="solo-registration" />
-        <input name="bot-field" />
-        <input name="tournament" />
-        <input name="player-name" />
-        <input name="riot-id" />
-        <input name="contact" />
-        <input name="preferred-role" />
-        <input name="rank" />
-        <input name="language" />
-        <input name="flex-role" />
-        <input name="notes" />
-        <input name="consent" />
-        <input name="discord-id" />
-        <input name="discord-username" />
-        <input name="discord-display-name" />
-        <input name="discord-verified" />
-      </form>
 
       <footer>
         <div className="container footer-grid">

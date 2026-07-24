@@ -2,6 +2,9 @@ import { createHmac, randomBytes, timingSafeEqual } from "node:crypto";
 
 export const SESSION_COOKIE = "hg_discord_session";
 export const OAUTH_STATE_COOKIE = "hg_discord_oauth_state";
+export const OAUTH_RETURN_COOKIE = "hg_discord_oauth_return";
+
+const DEFAULT_ADMIN_IDS = ["337568120028004362", "452872290347122698"];
 
 export type DiscordSession = {
   id: string;
@@ -54,6 +57,24 @@ export function readCookie(request: Request, name: string): string | undefined {
 
 export function sessionFromRequest(request: Request): DiscordSession | null {
   return verifySessionToken(readCookie(request, SESSION_COOKIE));
+}
+
+export function isAdminSession(session: DiscordSession | null): session is DiscordSession {
+  if (!session) return false;
+  const configuredIds = process.env.ADMIN_DISCORD_IDS?.split(",").map((id) => id.trim()).filter(Boolean);
+  return new Set(configuredIds?.length ? configuredIds : DEFAULT_ADMIN_IDS).has(session.id);
+}
+
+export function oauthReturnValue(returnTo: string | null): "admin" | "me" | "apply" {
+  if (returnTo === "/admin/" || returnTo === "/admin") return "admin";
+  if (returnTo === "/me/" || returnTo === "/me") return "me";
+  return "apply";
+}
+
+export function oauthReturnLocation(value: string | undefined): string {
+  if (value === "admin") return "/admin/";
+  if (value === "me") return "/me/";
+  return "/#apply";
 }
 
 export function secureCookie(name: string, value: string, maxAge: number, secure = true): string {

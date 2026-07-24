@@ -1,18 +1,22 @@
 import type { Config } from "@netlify/functions";
-import { clearCookie, SESSION_COOKIE } from "./_lib/auth";
+import { clearCookie, oauthReturnLocation, oauthReturnValue, SESSION_COOKIE } from "./_lib/auth";
 
-const handler = async (request: Request) => new Response(null, {
-  status: 302,
-  headers: {
-    Location: "/#apply",
-    "Set-Cookie": clearCookie(SESSION_COOKIE, new URL(request.url).protocol === "https:"),
-    "Cache-Control": "no-store",
-  },
-});
+const handler = async (request: Request) => {
+  const requestUrl = new URL(request.url);
+  const location = oauthReturnLocation(oauthReturnValue(requestUrl.searchParams.get("returnTo")));
+  return new Response(null, {
+    status: 302,
+    headers: {
+      Location: location,
+      "Set-Cookie": clearCookie(SESSION_COOKIE, requestUrl.protocol === "https:"),
+      "Cache-Control": "no-store",
+    },
+  });
+};
 
 export default handler;
 
 export const config: Config = {
-  path: "/api/auth/discord/logout",
+  path: ["/api/auth/discord/logout", "/api/auth/discord/logout/"],
   method: "GET",
 };

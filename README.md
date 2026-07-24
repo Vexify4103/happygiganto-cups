@@ -7,16 +7,21 @@ Zweisprachige Turnierseite für:
 
 Die Seite enthält Deutsch/Englisch, Light/Dark Mode, Regeln, Ablauf, Team-Slots,
 Bracket-Platzhalter, alle Social-Links und eine Solo-Anmeldung mit verifizierter
-Discord-Identität über Netlify Functions und Netlify Forms.
+Discord-Identität über Netlify Functions. Bewerbungen und Team-Zuteilungen
+werden in MongoDB gespeichert.
 
 ## Lokal starten
 
+Für die komplette Seite inklusive Discord, MongoDB und Admin-API:
+
 ```bash
 pnpm install
-pnpm dev
+npm install -g netlify-cli
+netlify dev
 ```
 
-Danach `http://localhost:3000` öffnen.
+Danach `http://localhost:8889` öffnen. Netlify Dev startet Next.js intern auf
+Port 3001 und stellt die komplette Website samt Functions auf Port 8889 bereit.
 
 ## Auf Netlify veröffentlichen
 
@@ -29,10 +34,6 @@ Die nötigen Build-Einstellungen stehen bereits in `netlify.toml`:
 - Build command: `pnpm build`
 - Publish directory: `out`
 - Node.js: 22
-
-Nach dem ersten Deployment erkennt Netlify das Formular
-`solo-registration`. Einsendungen erscheinen im Netlify-Dashboard unter
-„Forms“. Dort können auch E-Mail-Benachrichtigungen eingerichtet werden.
 
 ## Discord-Login einrichten
 
@@ -52,34 +53,53 @@ Nach dem ersten Deployment erkennt Netlify das Formular
    - `DISCORD_CLIENT_ID` – Application ID aus Discord
    - `DISCORD_CLIENT_SECRET` – Secret aus Discord OAuth2
    - `SESSION_SECRET` – ein zufälliges, mindestens 32 Zeichen langes Secret
+   - `MONGODB_URI` – vollständiger MongoDB Connection String
+   - `MONGODB_DB_NAME` – Datenbankname, standardmäßig `happygiganto_cups`
+   - `ADMIN_DISCORD_IDS` – kommaseparierte Admin-IDs
 4. Neu deployen.
 
 Der Client Secret und Discord Access Token werden niemals an den Browser
 ausgeliefert. Die Function speichert nur eine signierte HTTP-only Session.
 Mit der Bewerbung landen die verifizierte Discord-ID, der Username und der
-Display-Name in Netlify Forms.
+Display-Name zusammen mit den Turnierangaben in MongoDB.
 
 Zum lokalen Testen des vollständigen OAuth-Flows muss statt `pnpm dev` die
 Netlify-Entwicklungsumgebung verwendet werden:
 
 ```bash
-pnpm dlx netlify-cli dev
+netlify dev
 ```
 
 Die lokale Callback-URL muss zusätzlich im Discord Developer Portal eingetragen
-werden, beispielsweise `http://localhost:8888/api/auth/discord/callback`.
+werden:
+
+```text
+http://localhost:8889/api/auth/discord/callback
+```
+
+## MongoDB einrichten
+
+Für die Website einen eigenen MongoDB-Datenbankbenutzer mit Zugriff nur auf die
+Turnierdatenbank anlegen. Den Connection String ausschließlich als
+`MONGODB_URI` in Netlify speichern und niemals in Git committen.
+
+Wenn MongoDB Atlas verwendet wird, muss die Netzwerkfreigabe Verbindungen der
+Netlify Functions zulassen. Kostenlose Netlify-Functions haben keine feste
+ausgehende IP-Adresse. Eine breite Netzwerkfreigabe sollte deshalb nur zusammen
+mit TLS, einem langen zufälligen Datenbankpasswort und minimalen
+Datenbankberechtigungen verwendet werden.
 
 ## Spieler:innen Teams zuweisen
 
-1. In Netlify unter „Forms“ → `solo-registration` die Einsendungen als CSV exportieren.
-2. Die nicht öffentlich verlinkte Seite `/admin/` öffnen.
-3. „Netlify CSV importieren“ auswählen.
-4. Spieler:innen über das Auswahlfeld Team 1–8 oder der Waitlist zuweisen.
-5. Mit „Team-CSV exportieren“ die fertige Einteilung herunterladen.
+1. `/admin/` öffnen.
+2. Mit einem freigeschalteten Discord-Konto anmelden.
+3. Spieler:innen über das Auswahlfeld Team 1–8 oder der Waitlist zuweisen.
+4. Mit „Team-CSV exportieren“ bei Bedarf die fertige Einteilung herunterladen.
 
-Die importierten Kontaktdaten und Team-Zuteilungen bleiben ausschließlich im
-lokalen Browser-Speicher dieses Geräts. Die Admin-Seite lädt keine persönlichen
-Daten vom Server und enthält ohne manuellen CSV-Import keine Bewerbungen.
+Die API prüft die signierte Discord-Session und die Discord-ID serverseitig.
+Nicht autorisierte Konten erhalten weder Bewerbungs- noch Kontaktdaten. Die
+Team-Zuteilungen werden direkt in MongoDB gespeichert und stehen beiden Admins
+zur Verfügung.
 
 ## Vor dem öffentlichen Launch ergänzen
 

@@ -218,7 +218,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
           title: "3. Lokale Einstellungen",
           paragraphs: [
             "Sprache und Hell-/Dunkelmodus werden im Local Storage des Browsers gespeichert. Diese Informationen bleiben auf dem Gerät und ermöglichen die gewünschte Darstellung. Sie können durch Löschen der Website-Daten im Browser entfernt werden.",
-            "Das Admin-Team-Board speichert importierte Bewerbungsdaten und Team-Zuteilungen ebenfalls ausschließlich im lokalen Browser-Speicher des verwendeten Admin-Geräts. Es überträgt diese Daten nicht automatisch an die öffentliche Website.",
+            "Das Admin-Team-Board ruft Bewerbungsdaten aus einer MongoDB-Datenbank ab. Der Server liefert diese Daten nur nach Discord-Anmeldung und erfolgreicher Prüfung gegen eine feste Admin-ID-Liste aus. Team-Zuteilungen werden in derselben Datenbank gespeichert.",
           ],
         },
         {
@@ -241,7 +241,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "6. Empfänger und Drittlandtransfers",
           paragraphs: [
-            "Zugriff erhalten nur Personen, die mit Organisation und Administration des Turniers betraut sind. Netlify verarbeitet Hosting-, Function- und Formulardaten als technischer Dienstleister. Discord verarbeitet Daten im Rahmen des OAuth-Logins nach eigenen Bedingungen.",
+            "Zugriff erhalten nur Personen, die mit Organisation und Administration des Turniers betraut sind. Netlify verarbeitet Hosting- und Function-Daten als technischer Dienstleister. Bewerbungsdaten werden in einer MongoDB-Datenbank bei [MONGODB-HOSTER UND SPEICHERREGION ERGÄNZEN] gespeichert. Discord verarbeitet Daten im Rahmen des OAuth-Logins nach eigenen Bedingungen.",
             "Bei US-amerikanischen oder international tätigen Dienstleistern kann eine Verarbeitung außerhalb des Europäischen Wirtschaftsraums stattfinden. Die Anbieter informieren in ihren Datenschutzhinweisen über Angemessenheitsbeschlüsse, Standardvertragsklauseln oder andere eingesetzte Garantien.",
             "Die Social-Media-Links sind einfache externe Links. Eine Verbindung zu Twitch, YouTube, TikTok, Instagram oder Ko-fi wird über diese Links erst hergestellt, wenn sie angeklickt werden.",
           ],
@@ -250,7 +250,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
           title: "7. Speicherdauer",
           paragraphs: [
             "Bewerbungs- und Organisationsdaten werden bis [KONKRETE FRIST, Z. B. 90 TAGE NACH DEM LETZTEN TURNIER] gespeichert und anschließend gelöscht, sofern keine gesetzlichen Pflichten oder die Abwehr beziehungsweise Durchsetzung von Ansprüchen eine längere Aufbewahrung erfordern.",
-            "Nicht berücksichtigte Bewerbungen und Wartelistendaten werden bis [KONKRETE FRIST] gelöscht. Netlify-Protokolle und technische Daten unterliegen den jeweiligen betrieblichen Löschfristen des Dienstleisters.",
+            "Nicht berücksichtigte Bewerbungen und Wartelistendaten werden bis [KONKRETE FRIST] gelöscht. Netlify-Protokolle sowie technische Daten und Sicherungskopien des MongoDB-Hosters unterliegen den jeweiligen betrieblichen Löschfristen der Dienstleister.",
           ],
         },
         {
@@ -306,7 +306,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
           title: "3. Local preferences",
           paragraphs: [
             "Language and light/dark mode are stored in the browser’s local storage. They remain on the device and can be removed by clearing website data.",
-            "The admin team board also keeps imported applications and assignments exclusively in local browser storage on the admin device. It does not automatically transmit this data to the public website.",
+            "The admin team board retrieves applications from a MongoDB database. The server only provides this data after Discord sign-in and a successful check against a fixed admin-ID allowlist. Team assignments are stored in the same database.",
           ],
         },
         {
@@ -329,7 +329,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "6. Recipients and international transfers",
           paragraphs: [
-            "Access is limited to people responsible for tournament organization and administration. Netlify processes hosting, function and form data as a technical provider. Discord processes data for OAuth according to its own terms.",
+            "Access is limited to people responsible for tournament organization and administration. Netlify processes hosting and function data as a technical provider. Application data is stored in a MongoDB database hosted by [ADD MONGODB PROVIDER AND STORAGE REGION]. Discord processes data for OAuth according to its own terms.",
             "US-based or international providers may process data outside the European Economic Area. Their privacy notices explain applicable adequacy decisions, standard contractual clauses or other safeguards.",
             "Social links are ordinary external links. Connections to Twitch, YouTube, TikTok, Instagram or Ko-fi are only established when a link is selected.",
           ],
@@ -338,7 +338,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
           title: "7. Retention",
           paragraphs: [
             "Application and organizational data is kept until [SPECIFIC PERIOD, E.G. 90 DAYS AFTER THE FINAL TOURNAMENT] and then deleted unless legal duties or the establishment, exercise or defense of claims requires longer retention.",
-            "Unsuccessful applications and waitlist data are deleted after [SPECIFIC PERIOD]. Netlify logs and technical data follow the provider’s operational retention periods.",
+            "Unsuccessful applications and waitlist data are deleted after [SPECIFIC PERIOD]. Netlify logs, and technical data and backups maintained by the MongoDB provider, follow the respective providers’ operational retention periods.",
           ],
         },
         {

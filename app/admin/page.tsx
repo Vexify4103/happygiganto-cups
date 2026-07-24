@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type Applicant = {
   id: string;
@@ -13,94 +13,88 @@ type Applicant = {
   contact: string;
   discordId: string;
   discordUsername: string;
+  discordDisplayName: string;
   preferredRole: string;
   rank: string;
   language: string;
-  flexRole: string;
+  flexRole: boolean;
   notes: string;
   team: string;
 };
 
-const STORAGE_KEY = "hg-admin-applicants-v1";
+type AdminUser = {
+  id: string;
+  username: string;
+  globalName: string | null;
+};
+
+type AccessState = "loading" | "signed-out" | "forbidden" | "ready" | "error";
+
 const teamOptions = ["", "Team 1", "Team 2", "Team 3", "Team 4", "Team 5", "Team 6", "Team 7", "Team 8", "Waitlist"];
 
-function parseCsv(source: string): string[][] {
-  const rows: string[][] = [];
-  let row: string[] = [];
-  let cell = "";
-  let quoted = false;
-
-  for (let index = 0; index < source.length; index += 1) {
-    const character = source[index];
-    const next = source[index + 1];
-
-    if (character === "\"" && quoted && next === "\"") {
-      cell += "\"";
-      index += 1;
-    } else if (character === "\"") {
-      quoted = !quoted;
-    } else if (character === "," && !quoted) {
-      row.push(cell);
-      cell = "";
-    } else if ((character === "\n" || character === "\r") && !quoted) {
-      if (character === "\r" && next === "\n") index += 1;
-      row.push(cell);
-      if (row.some((value) => value.trim())) rows.push(row);
-      row = [];
-      cell = "";
-    } else {
-      cell += character;
-    }
-  }
-
-  row.push(cell);
-  if (row.some((value) => value.trim())) rows.push(row);
-  return rows;
-}
-
-function normalizeHeader(value: string) {
-  return value.replace(/^\uFEFF/, "").trim().toLowerCase().replace(/[\s_-]+/g, "");
-}
-
 function csvValue(value: string | undefined) {
-  return `"${String(value || "").replaceAll("\"", "\"\"")}"`;
+  const normalized = String(value || "");
+  const spreadsheetSafe = /^[=+\-@]/.test(normalized) ? `'${normalized}` : normalized;
+  return `"${spreadsheetSafe.replaceAll("\"", "\"\"")}"`;
 }
 
 export default function AdminPage() {
   const [applicants, setApplicants] = useState<Applicant[]>([]);
-  const [hydrated, setHydrated] = useState(false);
+  const [adminUser, setAdminUser] = useState<AdminUser | null>(null);
+  const [accessState, setAccessState] = useState<AccessState>("loading");
   const [game, setGame] = useState<"league" | "valorant">("league");
   const [query, setQuery] = useState("");
-  const [importMessage, setImportMessage] = useState("");
-  const fileInput = useRef<HTMLInputElement>(null);
+  const [savingId, setSavingId] = useState("");
+  const [message, setMessage] = useState("");
+
+  async function loadApplications() {
+    setMessage("");
+    setAccessState("loading");
+    try {
+      const response = await fetch("/api/admin/applications", {
+        credentials: "same-origin",
+        headers: { Accept: "application/json" },
+      });
+      if (response.status === 401) {
+        setAccessState("signed-out");
+        return;
+      }
+      if (response.status === 403) {
+        setAccessState("forbidden");
+        return;
+      }
+      if (!response.ok) throw new Error("Admin endpoint unavailable");
+      const result = await response.json() as { applications: Applicant[]; user: AdminUser };
+      setApplicants(result.applications);
+      setAdminUser(result.user);
+      setAccessState("ready");
+    } catch {
+      setAccessState("error");
+    }
+  }
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          setApplicants(JSON.parse(saved) as Applicant[]);
-        } catch {
-          localStorage.removeItem(STORAGE_KEY);
-        }
-      }
       document.documentElement.dataset.theme = localStorage.getItem("hg-theme") || "dark";
-      setHydrated(true);
+      void loadApplications();
     });
     return () => cancelAnimationFrame(frame);
   }, []);
-
-  useEffect(() => {
-    if (hydrated) localStorage.setItem(STORAGE_KEY, JSON.stringify(applicants));
-  }, [applicants, hydrated]);
 
   const visibleApplicants = useMemo(() => {
     const needle = query.trim().toLowerCase();
     return applicants.filter((applicant) => {
       if (applicant.tournament !== game) return false;
       if (!needle) return true;
-      return [applicant.playerName, applicant.riotId, applicant.preferredRole, applicant.rank, applicant.team]
-        .some((value) => value.toLowerCase().includes(needle));
+      return [
+        applicant.playerName,
+        applicant.riotId,
+        applicant.preferredRole,
+        applicant.rank,
+        applicant.team,
+        applicant.discordUsername,
+        applicant.contact,
+      ].some((value) => value.toLowerCase().includes(needle));
     });
   }, [applicants, game, query]);
 
@@ -108,56 +102,29 @@ export default function AdminPage() {
   const assignedCount = gameApplicants.filter((applicant) => applicant.team && applicant.team !== "Waitlist").length;
   const teamCount = new Set(gameApplicants.map((applicant) => applicant.team).filter((team) => team.startsWith("Team "))).size;
 
-  async function importCsv(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    const rows = parseCsv(await file.text());
-    if (rows.length < 2) {
-      setImportMessage("Keine verwertbaren Einträge gefunden.");
-      return;
-    }
-
-    const headers = rows[0].map(normalizeHeader);
-    const valueFrom = (row: string[], ...names: string[]) => {
-      const index = headers.findIndex((header) => names.includes(header));
-      return index >= 0 ? (row[index] || "").trim() : "";
-    };
-    const existingAssignments = new Map(applicants.map((applicant) => [`${applicant.riotId}|${applicant.contact}`, applicant.team]));
-
-    const imported = rows.slice(1).map((row, index): Applicant => {
-      const riotId = valueFrom(row, "riotid");
-      const contact = valueFrom(row, "contact", "discordnameoderemail", "discordnameoremail");
-      const rawTournament = valueFrom(row, "tournament", "turnier").toLowerCase();
-      return {
-        id: valueFrom(row, "id", "submissionid") || `${riotId || contact || "player"}-${index}`,
-        submittedAt: valueFrom(row, "createdat", "submittedat", "date"),
-        tournament: rawTournament.includes("valorant") ? "valorant" : "league",
-        playerName: valueFrom(row, "playername", "spielername", "name"),
-        riotId,
-        contact,
-        discordId: valueFrom(row, "discordid"),
-        discordUsername: valueFrom(row, "discordusername"),
-        preferredRole: valueFrom(row, "preferredrole", "bevorzugterolle", "role"),
-        rank: valueFrom(row, "rank", "aktuellerang"),
-        language: valueFrom(row, "language", "bevorzugtesprache"),
-        flexRole: valueFrom(row, "flexrole"),
-        notes: valueFrom(row, "notes", "nochetwasdaswirwissensollten"),
-        team: existingAssignments.get(`${riotId}|${contact}`) || "",
-      };
-    }).filter((applicant) => applicant.playerName || applicant.riotId || applicant.contact);
-
-    setApplicants(imported);
-    setImportMessage(`${imported.length} Solo-Anmeldungen importiert.`);
-    event.target.value = "";
-  }
-
-  function assignTeam(id: string, team: string) {
+  async function assignTeam(id: string, team: string) {
+    const previousTeam = applicants.find((applicant) => applicant.id === id)?.team || "";
     setApplicants((current) => current.map((applicant) => applicant.id === id ? { ...applicant, team } : applicant));
+    setSavingId(id);
+    setMessage("");
+    try {
+      const response = await fetch("/api/admin/applications", {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id, team }),
+      });
+      if (!response.ok) throw new Error("Assignment failed");
+    } catch {
+      setApplicants((current) => current.map((applicant) => applicant.id === id ? { ...applicant, team: previousTeam } : applicant));
+      setMessage("Die Team-Zuteilung konnte nicht gespeichert werden.");
+    } finally {
+      setSavingId("");
+    }
   }
 
   function exportTeams() {
-    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Preferred Role", "Rank", "Language", "Discord Username", "Discord ID", "Contact Email", "Notes"];
+    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Preferred Role", "Rank", "Language", "Discord Display Name", "Discord Username", "Discord ID", "Contact Email", "Notes", "Submitted At"];
     const lines = applicants.map((applicant) => [
       applicant.tournament,
       applicant.team || "Unassigned",
@@ -166,10 +133,12 @@ export default function AdminPage() {
       applicant.preferredRole,
       applicant.rank,
       applicant.language,
+      applicant.discordDisplayName,
       applicant.discordUsername,
       applicant.discordId,
       applicant.contact,
       applicant.notes,
+      applicant.submittedAt,
     ].map(csvValue).join(","));
     const csv = `\uFEFF${header.map(csvValue).join(",")}\n${lines.join("\n")}`;
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
@@ -180,12 +149,6 @@ export default function AdminPage() {
     URL.revokeObjectURL(url);
   }
 
-  function clearBoard() {
-    if (!window.confirm("Alle lokal importierten Anmeldungen und Team-Zuteilungen löschen?")) return;
-    setApplicants([]);
-    setImportMessage("Lokales Board geleert.");
-  }
-
   return (
     <main className="admin-page">
       <header className="admin-header">
@@ -194,75 +157,101 @@ export default function AdminPage() {
           <span className="brand-type">HAPPY<span>GIGANTO</span></span>
         </Link>
         <div>
-          <span className="admin-private">LOCAL ADMIN BOARD</span>
+          <span className="admin-private">DISCORD PROTECTED</span>
           <Link href="/">← Zur Turnierseite</Link>
         </div>
       </header>
 
-      <section className="admin-shell">
-        <div className="admin-intro">
-          <div>
-            <p className="section-kicker">TEAM BUILDER</p>
-            <h1>SOLO QUEUE<br />CONTROL ROOM</h1>
-            <p>Exportiere die Einsendungen im privaten Netlify-Dashboard als CSV und importiere sie hier. Die Daten und Zuteilungen bleiben ausschließlich in diesem Browser.</p>
-          </div>
-          <div className="admin-actions">
-            <input ref={fileInput} type="file" accept=".csv,text/csv" onChange={importCsv} />
-            <button className="button button-primary" type="button" onClick={() => fileInput.current?.click()}>Netlify CSV importieren</button>
-            <button className="button button-ghost" type="button" onClick={exportTeams} disabled={!applicants.length}>Team-CSV exportieren</button>
-            {importMessage && <p>{importMessage}</p>}
-          </div>
-        </div>
-
-        <div className="admin-stats">
-          <article><span>APPLICANTS</span><strong>{gameApplicants.length}</strong></article>
-          <article><span>ASSIGNED</span><strong>{assignedCount}</strong></article>
-          <article><span>TEAMS</span><strong>{teamCount}</strong></article>
-          <article><span>OPEN</span><strong>{gameApplicants.filter((applicant) => !applicant.team).length}</strong></article>
-        </div>
-
-        <div className="admin-toolbar">
-          <div className="teams-game-switch">
-            <button className={game === "league" ? "active" : ""} type="button" onClick={() => setGame("league")}>LOL</button>
-            <button className={game === "valorant" ? "active" : ""} type="button" onClick={() => setGame("valorant")}>VAL</button>
-          </div>
-          <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Spieler, Rolle, Rang oder Team suchen …" />
-        </div>
-
-        <div className="admin-table-wrap">
-          <table className="admin-table">
-            <thead><tr><th>Player</th><th>Role</th><th>Rank</th><th>Language</th><th>Contact</th><th>Assignment</th></tr></thead>
-            <tbody>
-              {visibleApplicants.map((applicant) => (
-                <tr key={applicant.id}>
-                  <td><strong>{applicant.playerName || "—"}</strong><small>{applicant.riotId || "No Riot ID"}</small></td>
-                  <td>{applicant.preferredRole || "—"}{applicant.flexRole && <small>Flex ✓</small>}</td>
-                  <td>{applicant.rank || "—"}</td>
-                  <td>{applicant.language || "—"}</td>
-                  <td><strong>{applicant.discordUsername ? `@${applicant.discordUsername}` : "—"}</strong><small>{applicant.contact || applicant.discordId || "No email"}</small></td>
-                  <td>
-                    <select value={applicant.team} onChange={(event) => assignTeam(applicant.id, event.target.value)}>
-                      {teamOptions.map((team) => <option value={team} key={team}>{team || "Unassigned"}</option>)}
-                    </select>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {!visibleApplicants.length && (
-            <div className="admin-empty">
-              <span>↥</span>
-              <strong>Noch keine Solo-Anmeldungen</strong>
-              <p>CSV aus Netlify Forms exportieren und oben importieren.</p>
+      {accessState !== "ready" ? (
+        <section className="admin-gate">
+          <p className="section-kicker">PRIVATE ADMIN AREA</p>
+          <h1>
+            {accessState === "loading" && "ZUGRIFF WIRD GEPRÜFT"}
+            {accessState === "signed-out" && "DISCORD LOGIN REQUIRED"}
+            {accessState === "forbidden" && "ACCESS DENIED"}
+            {accessState === "error" && "VERBINDUNGSFEHLER"}
+          </h1>
+          <p>
+            {accessState === "loading" && "Die Discord-Session und Admin-Berechtigung werden serverseitig geprüft."}
+            {accessState === "signed-out" && "Melde dich mit einem freigeschalteten Discord-Konto an, um die Bewerbungen zu sehen."}
+            {accessState === "forbidden" && "Dieses Discord-Konto steht nicht auf der Admin-Liste. Bewerbungsdaten wurden nicht übertragen."}
+            {accessState === "error" && "Die Admin-Datenbank ist gerade nicht erreichbar. Prüfe die MongoDB-Konfiguration oder versuche es erneut."}
+          </p>
+          {accessState === "signed-out" && <a className="button button-primary" href="/api/auth/discord/login?returnTo=%2Fadmin%2F">Mit Discord anmelden</a>}
+          {accessState === "forbidden" && <a className="button button-ghost" href="/api/auth/discord/logout?returnTo=%2Fadmin%2F">Abmelden</a>}
+          {accessState === "error" && <button className="button button-primary" type="button" onClick={() => void loadApplications()}>Erneut versuchen</button>}
+        </section>
+      ) : (
+        <section className="admin-shell">
+          <div className="admin-intro">
+            <div>
+              <p className="section-kicker">MONGODB TEAM BUILDER</p>
+              <h1>SOLO QUEUE<br />CONTROL ROOM</h1>
+              <p>Alle Solo-Anmeldungen werden direkt aus der geschützten Datenbank geladen. Team-Zuteilungen werden sofort gespeichert und sind für beide Admins verfügbar.</p>
             </div>
-          )}
-        </div>
+            <div className="admin-actions">
+              <span className="admin-account-label">ANGEMELDET ALS</span>
+              <strong>{adminUser?.globalName || adminUser?.username}</strong>
+              <small>@{adminUser?.username} · {adminUser?.id}</small>
+              <button className="button button-primary" type="button" onClick={() => void loadApplications()}>Bewerbungen aktualisieren</button>
+              <button className="button button-ghost" type="button" onClick={exportTeams} disabled={!applicants.length}>Team-CSV exportieren</button>
+              <a className="admin-logout" href="/api/auth/discord/logout?returnTo=%2Fadmin%2F">Discord abmelden</a>
+            </div>
+          </div>
 
-        <div className="admin-footnote">
-          <p><strong>Datenschutz:</strong> Dieses Board lädt keine Bewerbungen vom Server. Importierte Kontaktdaten verbleiben im lokalen Browser-Speicher.</p>
-          <button type="button" onClick={clearBoard} disabled={!applicants.length}>Lokales Board leeren</button>
-        </div>
-      </section>
+          <div className="admin-stats">
+            <article><span>APPLICANTS</span><strong>{gameApplicants.length}</strong></article>
+            <article><span>ASSIGNED</span><strong>{assignedCount}</strong></article>
+            <article><span>TEAMS</span><strong>{teamCount}</strong></article>
+            <article><span>OPEN</span><strong>{gameApplicants.filter((applicant) => !applicant.team).length}</strong></article>
+          </div>
+
+          <div className="admin-toolbar">
+            <div className="teams-game-switch">
+              <button className={game === "league" ? "active" : ""} type="button" onClick={() => setGame("league")}>LOL</button>
+              <button className={game === "valorant" ? "active" : ""} type="button" onClick={() => setGame("valorant")}>VAL</button>
+            </div>
+            <input type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Spieler, Discord, Rolle, Rang oder Team suchen …" />
+          </div>
+
+          {message && <p className="admin-error" role="alert">{message}</p>}
+          <div className="admin-table-wrap">
+            <table className="admin-table">
+              <thead><tr><th>Player</th><th>Submitted</th><th>Role</th><th>Rank</th><th>Language</th><th>Discord / Contact</th><th>Notes</th><th>Assignment</th></tr></thead>
+              <tbody>
+                {visibleApplicants.map((applicant) => (
+                  <tr key={applicant.id}>
+                    <td><strong>{applicant.playerName || "—"}</strong><small>{applicant.riotId || "No Riot ID"}</small></td>
+                    <td>{new Intl.DateTimeFormat("de-DE", { dateStyle: "short", timeStyle: "short" }).format(new Date(applicant.submittedAt))}</td>
+                    <td>{applicant.preferredRole || "—"}{applicant.flexRole && <small>Flex ✓</small>}</td>
+                    <td>{applicant.rank || "—"}</td>
+                    <td>{applicant.language || "—"}</td>
+                    <td><strong>{applicant.discordDisplayName || `@${applicant.discordUsername}`}</strong><small>@{applicant.discordUsername} · {applicant.discordId}</small><small>{applicant.contact || "Keine E-Mail"}</small></td>
+                    <td className="admin-notes">{applicant.notes || "—"}</td>
+                    <td>
+                      <select value={applicant.team} disabled={savingId === applicant.id} onChange={(event) => void assignTeam(applicant.id, event.target.value)}>
+                        {teamOptions.map((team) => <option value={team} key={team}>{team || "Unassigned"}</option>)}
+                      </select>
+                      {savingId === applicant.id && <small>Speichert …</small>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            {!visibleApplicants.length && (
+              <div className="admin-empty">
+                <span>↥</span>
+                <strong>Noch keine Solo-Anmeldungen</strong>
+                <p>Neue Bewerbungen erscheinen nach dem Absenden automatisch in MongoDB.</p>
+              </div>
+            )}
+          </div>
+
+          <div className="admin-footnote">
+            <p><strong>Datenschutz:</strong> Bewerbungsdaten werden nur nach serverseitiger Discord-ID-Prüfung ausgeliefert. Diese Seite enthält ohne erfolgreiche Admin-Autorisierung keine personenbezogenen Daten.</p>
+          </div>
+        </section>
+      )}
     </main>
   );
 }

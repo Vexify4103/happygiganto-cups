@@ -1,5 +1,5 @@
 import type { Config } from "@netlify/functions";
-import { json, sessionFromRequest } from "./_lib/auth";
+import { isAdminSession, json, sessionFromRequest } from "./_lib/auth";
 
 const handler = async (request: Request) => {
   const session = sessionFromRequest(request);
@@ -7,6 +7,7 @@ const handler = async (request: Request) => {
 
   return json({
     authenticated: true,
+    isAdmin: isAdminSession(session),
     user: {
       id: session.id,
       username: session.username,
@@ -19,6 +20,6 @@ const handler = async (request: Request) => {
 export default handler;
 
 export const config: Config = {
-  path: "/api/auth/discord/session",
+  path: ["/api/auth/discord/session", "/api/auth/discord/session/"],
   method: "GET",
 };
