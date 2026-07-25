@@ -4,7 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.URL || process.env.DEPLOY_PRIME_URL || "http://localhost:3000"),
   title: "HappyGiganto Community Cups 2026",
-  description: "League of Legends am 22.08.2026 und Valorant am 01.09.2026 – zwei Community-Turniere live bei HappyGiganto.",
+  description: "League of Legends am 12.09.2026 und Valorant am 26.09.2026, jeweils ab 11:00 Uhr – zwei Community-Turniere live bei HappyGiganto.",
   icons: {
     icon: "/happygiganto-logo.png",
     apple: "/happygiganto-logo.png",

@@ -31,13 +31,13 @@ const documents: Record<Kind, Record<Language, Document>> = {
       title: "KLARE REGELN. GUTE GAMES.",
       intro: "Diese Bedingungen regeln die Teilnahme an den HappyGiganto Community Cups 2026 für League of Legends und Valorant.",
       notice: "Vor Veröffentlichung ergänzen: vollständiger Name, ladungsfähige Anschrift und Kontakt-E-Mail der Veranstalterin. Dieser Entwurf ersetzt keine individuelle Rechtsberatung.",
-      updated: "Stand: 24. Juli 2026",
+      updated: "Stand: 25. Juli 2026",
       sections: [
         {
           title: "1. Veranstalterin und Geltungsbereich",
           paragraphs: [
             "Veranstalterin: [VOLLSTÄNDIGER NAME / FIRMENNAME], [LADUNGSFÄHIGE ANSCHRIFT], E-Mail: [KONTAKT-E-MAIL].",
-            "Die Bedingungen gelten für den League of Legends Community Cup am 22. August 2026 und den Valorant Community Cup am 1. September 2026. Abweichende oder ergänzende Spielregeln, die vor Turnierbeginn veröffentlicht werden, sind Bestandteil dieser Bedingungen.",
+            "Die Bedingungen gelten für den League of Legends Community Cup am 12. September 2026 und den Valorant Community Cup am 26. September 2026, jeweils mit geplantem Start um 11:00 Uhr. Abweichende oder ergänzende Spielregeln, die vor Turnierbeginn veröffentlicht werden, sind Bestandteil dieser Bedingungen.",
           ],
         },
         {
@@ -53,7 +53,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "3. Team-Zuteilung",
           paragraphs: [
-            "Die Turnierleitung stellt Teams anhand der verfügbaren Anmeldungen zusammen. Dabei können insbesondere Spiel, bevorzugte Rolle, Rang, Sprache und Flexibilität berücksichtigt werden. Ein Anspruch auf eine bestimmte Rolle, Teamzusammensetzung oder Mitspieler:innen besteht nicht.",
+            "Die Turnierleitung stellt Teams anhand der verfügbaren Anmeldungen zusammen. Dabei können insbesondere Spiel, Main Role, Secondary Role, aktueller und bisher höchster Rang sowie Sprache berücksichtigt werden. Ein Anspruch auf eine bestimmte Rolle, Teamzusammensetzung oder Mitspieler:innen besteht nicht.",
             "Die Team-Zuteilung wird über den angegebenen beziehungsweise verifizierten Kontaktkanal mitgeteilt. Kann ein vollständiges Team nicht gebildet werden, kann eine Anmeldung auf die Warteliste gesetzt oder das Teilnahmeangebot zurückgenommen werden.",
           ],
         },
@@ -113,13 +113,13 @@ const documents: Record<Kind, Record<Language, Document>> = {
       title: "CLEAR RULES. GOOD GAMES.",
       intro: "These terms govern participation in the HappyGiganto Community Cups 2026 for League of Legends and Valorant.",
       notice: "Complete before publication: organizer’s full legal name, service address and contact email. This draft is not a substitute for individual legal advice.",
-      updated: "Last updated: July 24, 2026",
+      updated: "Last updated: July 25, 2026",
       sections: [
         {
           title: "1. Organizer and scope",
           paragraphs: [
             "Organizer: [FULL LEGAL NAME / COMPANY], [SERVICE ADDRESS], email: [CONTACT EMAIL].",
-            "These terms apply to the League of Legends Community Cup on August 22, 2026 and the Valorant Community Cup on September 1, 2026. Additional game rules published before the tournament form part of these terms.",
+            "These terms apply to the League of Legends Community Cup on September 12, 2026 and the Valorant Community Cup on September 26, 2026, both scheduled to start at 11:00 CEST. Additional game rules published before the tournament form part of these terms.",
           ],
         },
         {
@@ -135,7 +135,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "3. Team assignment",
           paragraphs: [
-            "Tournament admins assemble teams from available applicants. Game, preferred role, rank, language and flexibility may be considered. Players have no right to a particular role, line-up or teammate.",
+            "Tournament admins assemble teams from available applicants. Game, main role, secondary role, current and peak rank, and language may be considered. Players have no right to a particular role, line-up or teammate.",
             "Assignments are communicated through the provided or verified contact channel. If a complete team cannot be formed, an applicant may be waitlisted or the participation offer may be withdrawn.",
           ],
         },
@@ -197,7 +197,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
       title: "DEINE DATEN. TRANSPARENT ERKLÄRT.",
       intro: "Hier erklären wir, welche personenbezogenen Daten beim Besuch, bei Discord-Anmeldung und Turnierbewerbung verarbeitet werden.",
       notice: "Vor Veröffentlichung ergänzen: verantwortliche Person, Anschrift, Datenschutz-E-Mail, konkrete Löschfrist und gegebenenfalls zuständige Aufsichtsbehörde. Dieser Entwurf ersetzt keine individuelle Rechtsberatung.",
-      updated: "Stand: 24. Juli 2026",
+      updated: "Stand: 25. Juli 2026",
       sections: [
         {
           title: "1. Verantwortliche Stelle",
@@ -233,7 +233,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "5. Turnierbewerbung",
           paragraphs: [
-            "Bei der Bewerbung verarbeiten wir Turnierauswahl, Spielername, Riot ID, optionale E-Mail-Adresse, bevorzugte Rolle, Rang, Sprache, Flex-Angabe, freiwillige Notizen sowie die verifizierten Discord-Daten.",
+            "Bei der Bewerbung verarbeiten wir Turnierauswahl, Spielername, Riot ID, optionale E-Mail-Adresse, Main Role und Secondary Role beziehungsweise bevorzugte Rolle, aktuellen und bisher höchsten Rang, OP.GG-Profillink, Sprache, freiwillige Notizen sowie die verifizierten Discord-Daten.",
             "Die Daten werden zur Prüfung der Bewerbung, Bildung ausgeglichener Teams, Kontaktaufnahme, Organisation, Durchführung, Streitklärung und Missbrauchsprävention verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO; Sicherheits- und Missbrauchsmaßnahmen beruhen ergänzend auf Art. 6 Abs. 1 lit. f DSGVO.",
             "Pflichtangaben sind erforderlich, um eine Bewerbung zu bearbeiten. Ohne diese Angaben ist eine Teilnahme nicht möglich. Die optionale E-Mail-Adresse und freiwillige Notizen sind nicht erforderlich.",
           ],
@@ -285,7 +285,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
       title: "YOUR DATA. CLEARLY EXPLAINED.",
       intro: "This policy explains which personal data is processed when visiting the site, signing in with Discord and applying for a tournament.",
       notice: "Complete before publication: controller’s identity and address, privacy contact, exact retention periods and, where applicable, the competent authority. This draft is not a substitute for individual legal advice.",
-      updated: "Last updated: July 24, 2026",
+      updated: "Last updated: July 25, 2026",
       sections: [
         {
           title: "1. Controller",
@@ -321,7 +321,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "5. Tournament applications",
           paragraphs: [
-            "We process tournament selection, player name, Riot ID, optional email, preferred role, rank, language, flex preference, voluntary notes and verified Discord details.",
+            "We process tournament selection, player name, Riot ID, optional email, main and secondary role or preferred role, current and peak rank, OP.GG profile link, language, voluntary notes and verified Discord details.",
             "The purposes are application review, balanced team formation, communication, organization, tournament operation, dispute resolution and abuse prevention. The legal basis is Article 6(1)(b) GDPR, supplemented by Article 6(1)(f) GDPR for security and abuse prevention.",
             "Required fields are necessary to process an application. Participation is not possible without them. Email and notes are optional.",
           ],

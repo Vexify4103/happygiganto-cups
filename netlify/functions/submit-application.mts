@@ -3,9 +3,11 @@ import { MongoServerError } from "mongodb";
 import { json, sameOrigin, sessionFromRequest } from "./_lib/auth";
 import { applicationsCollection, type Tournament } from "./_lib/mongodb";
 
-const requiredFields = ["tournament", "player-name", "riot-id", "preferred-role", "rank", "language", "consent"];
+const requiredFields = ["tournament", "player-name", "riot-id", "rank", "language", "consent"];
 const tournaments = new Set<Tournament>(["league", "valorant"]);
 const languages = new Set(["de", "en", "both"]);
+const leagueRoles = new Set(["Top", "Jungle", "Mid", "ADC", "Support"]);
+const valorantRoles = new Set(["Duelist", "Initiator", "Controller", "Sentinel", "Flex"]);
 
 function field(formData: FormData, name: string, maxLength: number): string {
   return String(formData.get(name) || "").trim().slice(0, maxLength);
@@ -30,6 +32,29 @@ const handler = async (request: Request) => {
     return json({ error: "Invalid application data." }, 400);
   }
 
+  const opggUrl = field(incoming, "opgg-url", 500);
+  const peakRank = field(incoming, "peak-rank", 80);
+  const mainRole = field(incoming, "main-role", 80);
+  const secondaryRole = field(incoming, "secondary-role", 80);
+  const preferredRole = field(incoming, "preferred-role", 80);
+  if (tournament === "league") {
+    if (!opggUrl || !peakRank) return json({ error: "OP.GG profile and peak rank are required for League." }, 400);
+    if (!leagueRoles.has(mainRole) || !leagueRoles.has(secondaryRole) || mainRole === secondaryRole) {
+      return json({ error: "Valid and different main and secondary roles are required for League." }, 400);
+    }
+    try {
+      const profileUrl = new URL(opggUrl);
+      const hostname = profileUrl.hostname.toLowerCase();
+      if (profileUrl.protocol !== "https:" || (hostname !== "op.gg" && !hostname.endsWith(".op.gg"))) {
+        return json({ error: "Invalid OP.GG profile URL." }, 400);
+      }
+    } catch {
+      return json({ error: "Invalid OP.GG profile URL." }, 400);
+    }
+  } else if (!valorantRoles.has(preferredRole)) {
+    return json({ error: "A valid preferred role is required for Valorant." }, 400);
+  }
+
   const now = new Date();
   try {
     const collection = await applicationsCollection();
@@ -38,10 +63,14 @@ const handler = async (request: Request) => {
       playerName: field(incoming, "player-name", 120),
       riotId: field(incoming, "riot-id", 120),
       contact: field(incoming, "contact", 254).toLowerCase(),
-      preferredRole: field(incoming, "preferred-role", 80),
+      preferredRole: tournament === "league" ? mainRole : preferredRole,
+      mainRole: tournament === "league" ? mainRole : "",
+      secondaryRole: tournament === "league" ? secondaryRole : "",
       rank: field(incoming, "rank", 80),
+      opggUrl: tournament === "league" ? opggUrl : "",
+      peakRank: tournament === "league" ? peakRank : "",
       language,
-      flexRole: field(incoming, "flex-role", 10) === "yes",
+      flexRole: tournament === "valorant" && field(incoming, "flex-role", 10) === "yes",
       notes: field(incoming, "notes", 2_000),
       consentAt: now,
       discord: {

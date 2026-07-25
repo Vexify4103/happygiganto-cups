@@ -2,8 +2,8 @@
 
 Zweisprachige Turnierseite für:
 
-- League of Legends — 22.08.2026
-- Valorant — 01.09.2026
+- League of Legends — 12.09.2026, 11:00 Uhr
+- Valorant — 26.09.2026, 11:00 Uhr
 
 Die Seite enthält Deutsch/Englisch, Light/Dark Mode, Regeln, Ablauf, Team-Slots,
 Bracket-Platzhalter, alle Social-Links und eine Solo-Anmeldung mit verifizierter

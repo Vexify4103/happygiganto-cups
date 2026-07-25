@@ -24,7 +24,7 @@ const copy = {
     intro: "Zwei Community-Turniere, ein Stream und jede Menge Plays. Melde dich solo an – wir bauen aus allen Anmeldungen faire Teams.",
     viewChannel: "Zum Twitch-Kanal",
     applyNow: "Solo anmelden",
-    dates: "22. AUG — 01. SEP 2026",
+    dates: "12. SEP — 26. SEP 2026 · START 11:00",
     chooseEvent: "WÄHLE DEIN TURNIER",
     eventIntro: "Alle wichtigen Infos auf einen Blick. Die finalen Startzeiten, Preise und Check-in-Zeiten werden noch bekanntgegeben.",
     date: "Datum", format: "Format", platform: "Plattform", registration: "Anmeldung",
@@ -35,7 +35,7 @@ const copy = {
     timelineTitle: "SO LÄUFT ES AB",
     timelineIntro: "Von der Anmeldung bis zum großen Finale – wir halten es unkompliziert und transparent.",
     timeline: [
-      ["01", "Solo anmelden", "Du schickst deine Rolle, deinen Rang und deine Riot ID ab."],
+      ["01", "Solo anmelden", "Du schickst Rollen, Rang und Riot ID sowie für League dein OP.GG-Profil ab."],
       ["02", "Team-Zuteilung", "Wir stellen möglichst ausgeglichene Teams zusammen und informieren dich."],
       ["03", "Check-in", "Dein vollständiges Team ist am Turniertag rechtzeitig online."],
       ["04", "Let’s play", "Bracket verfolgen, Matches spielen und den Stream einschalten."],
@@ -64,7 +64,8 @@ const copy = {
     formTitle: "MELDE DICH SOLO AN.",
     formIntro: "Du brauchst noch kein Team. Verrate uns, was du spielst – wir übernehmen das Matchmaking.",
     tournament: "Turnier", playerName: "Spielername", riotId: "Riot ID",
-    contact: "Kontakt-E-Mail (optional)", role: "Bevorzugte Rolle", rank: "Aktueller Rang",
+    contact: "Kontakt-E-Mail (optional)", role: "Bevorzugte Rolle", mainRole: "Main Role", secondaryRole: "Secondary Role", rank: "Aktueller Rang",
+    opgg: "OP.GG-Profil", peakRank: "Bisher höchster Rang (Peak)",
     languageLabel: "Bevorzugte Sprache", flex: "Ich kann bei Bedarf auch eine andere Rolle spielen.",
     note: "Noch etwas, das wir wissen sollten?",
     consent: "Ich habe die Teilnahmebedingungen und Datenschutzerklärung gelesen und akzeptiere die Teilnahmebedingungen.",
@@ -83,6 +84,8 @@ const copy = {
     playerPlaceholder: "Dein Ingame- oder Community-Name", riotPlaceholder: "RiotName#TAG",
     contactPlaceholder: "mail@beispiel.de",
     rankPlaceholder: "z. B. Gold 2",
+    opggPlaceholder: "https://www.op.gg/summoners/euw/...",
+    peakRankPlaceholder: "z. B. Emerald 1",
     notePlaceholder: "Fragen, Verfügbarkeiten, Wünsche …",
     footerLine: "Community-Turniere von HappyGiganto.",
     madeFor: "Gemacht für gute Games und noch bessere Vibes.",
@@ -100,7 +103,7 @@ const copy = {
     intro: "Two community tournaments, one stream and plenty of plays. Register solo – we’ll build balanced teams from all applicants.",
     viewChannel: "Visit Twitch channel",
     applyNow: "Register solo",
-    dates: "AUG 22 — SEP 01, 2026",
+    dates: "SEP 12 — SEP 26, 2026 · START 11:00",
     chooseEvent: "CHOOSE YOUR TOURNAMENT",
     eventIntro: "Everything you need at a glance. Final start times, prizes and check-in times will be announced soon.",
     date: "Date", format: "Format", platform: "Platform", registration: "Registration",
@@ -111,7 +114,7 @@ const copy = {
     timelineTitle: "HOW IT WORKS",
     timelineIntro: "From registration to the grand final – simple, clear and transparent.",
     timeline: [
-      ["01", "Register solo", "Submit your role, rank and Riot ID."],
+      ["01", "Register solo", "Submit your roles, rank and Riot ID, plus your OP.GG profile for League."],
       ["02", "Team assignment", "We build balanced teams and contact you with your line-up."],
       ["03", "Check in", "Your complete assigned team must be online on time."],
       ["04", "Let’s play", "Follow the bracket, play your matches and tune into the stream."],
@@ -140,7 +143,8 @@ const copy = {
     formTitle: "REGISTER SOLO.",
     formIntro: "You don’t need a team yet. Tell us what you play and we’ll handle the matchmaking.",
     tournament: "Tournament", playerName: "Player name", riotId: "Riot ID",
-    contact: "Contact email (optional)", role: "Preferred role", rank: "Current rank",
+    contact: "Contact email (optional)", role: "Preferred role", mainRole: "Main role", secondaryRole: "Secondary role", rank: "Current rank",
+    opgg: "OP.GG profile", peakRank: "Peak rank",
     languageLabel: "Preferred language", flex: "I can play another role if needed.",
     note: "Anything else we should know?",
     consent: "I have read the Terms of Participation and Privacy Policy and accept the Terms of Participation.",
@@ -159,6 +163,8 @@ const copy = {
     playerPlaceholder: "Your in-game or community name", riotPlaceholder: "RiotName#TAG",
     contactPlaceholder: "mail@example.com",
     rankPlaceholder: "e.g. Gold 2",
+    opggPlaceholder: "https://www.op.gg/summoners/euw/...",
+    peakRankPlaceholder: "e.g. Emerald 1",
     notePlaceholder: "Questions, availability, requests …",
     footerLine: "Community tournaments by HappyGiganto.",
     madeFor: "Made for good games and even better vibes.",
@@ -169,17 +175,17 @@ const copy = {
 } as const;
 
 const eventData = {
-  league: { title: "LEAGUE OF LEGENDS", dateDe: "22. AUGUST 2026", dateEn: "AUGUST 22, 2026", mark: "L" },
-  valorant: { title: "VALORANT", dateDe: "01. SEPTEMBER 2026", dateEn: "SEPTEMBER 01, 2026", mark: "V" },
+  league: { title: "LEAGUE OF LEGENDS", dateDe: "12. SEPTEMBER 2026 · 11:00 UHR", dateEn: "SEPTEMBER 12, 2026 · 11:00 CEST", mark: "L" },
+  valorant: { title: "VALORANT", dateDe: "26. SEPTEMBER 2026 · 11:00 UHR", dateEn: "SEPTEMBER 26, 2026 · 11:00 CEST", mark: "V" },
 } as const;
 
 const roleOptions = {
   de: {
-    league: ["Top", "Jungle", "Mid", "ADC", "Support", "Flex"],
+    league: ["Top", "Jungle", "Mid", "ADC", "Support"],
     valorant: ["Duelist", "Initiator", "Controller", "Sentinel", "Flex"],
   },
   en: {
-    league: ["Top", "Jungle", "Mid", "ADC", "Support", "Flex"],
+    league: ["Top", "Jungle", "Mid", "ADC", "Support"],
     valorant: ["Duelist", "Initiator", "Controller", "Sentinel", "Flex"],
   },
 } as const;
@@ -188,6 +194,8 @@ export default function Home() {
   const [language, setLanguage] = useState<Language>("de");
   const [theme, setTheme] = useState<Theme>("dark");
   const [activeGame, setActiveGame] = useState<Game>("league");
+  const [leagueMainRole, setLeagueMainRole] = useState("");
+  const [leagueSecondaryRole, setLeagueSecondaryRole] = useState("");
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [discordUser, setDiscordUser] = useState<DiscordUser | null>(null);
@@ -331,9 +339,9 @@ export default function Home() {
             </div>
           </div>
           <div className="hero-stage" aria-label={t.dates}>
-            <div className="stage-card stage-league"><span className="stage-index">01</span><span className="stage-game">LEAGUE</span><strong>22<span>AUG</span></strong></div>
+            <div className="stage-card stage-league"><span className="stage-index">01</span><span className="stage-game">LEAGUE</span><strong>12<span>SEP</span></strong></div>
             <div className="stage-vs">VS</div>
-            <div className="stage-card stage-valorant"><span className="stage-index">02</span><span className="stage-game">VALORANT</span><strong>01<span>SEP</span></strong></div>
+            <div className="stage-card stage-valorant"><span className="stage-index">02</span><span className="stage-game">VALORANT</span><strong>26<span>SEP</span></strong></div>
             <div className="stage-year">20<br />26</div>
           </div>
         </div>
@@ -452,34 +460,81 @@ export default function Home() {
             </div>
             <fieldset className="application-fields" disabled={!discordUser || submitting}>
             <div className="form-row">
-              <label><span>{t.tournament} *</span><select name="tournament" required value={activeGame} onChange={(e) => setActiveGame(e.target.value as Game)}><option value="league">League of Legends — 22.08.2026</option><option value="valorant">Valorant — 01.09.2026</option></select></label>
+              <label><span>{t.tournament} *</span><select name="tournament" required value={activeGame} onChange={(e) => setActiveGame(e.target.value as Game)}><option value="league">League of Legends — 12.09.2026 · 11:00</option><option value="valorant">Valorant — 26.09.2026 · 11:00</option></select></label>
               <label><span>{t.playerName} *</span><input name="player-name" required placeholder={t.playerPlaceholder} autoComplete="nickname" /></label>
             </div>
             <div className="form-row">
               <label><span>{t.riotId} *</span><input name="riot-id" required placeholder={t.riotPlaceholder} /></label>
               <label><span>{t.contact}</span><input type="email" name="contact" placeholder={t.contactPlaceholder} autoComplete="email" /></label>
             </div>
-            <div className="form-row">
-              <label>
-                <span>{t.role} *</span>
-                <select name="preferred-role" required defaultValue="">
-                  <option value="" disabled>—</option>
-                  {roleOptions[language][activeGame].map((role) => <option value={role} key={role}>{role}</option>)}
-                </select>
-              </label>
-              <label><span>{t.rank} *</span><input name="rank" required placeholder={t.rankPlaceholder} /></label>
-            </div>
-            <div className="form-row">
-              <label>
-                <span>{t.languageLabel} *</span>
-                <select name="language" required defaultValue="both">
-                  <option value="de">Deutsch</option>
-                  <option value="en">English</option>
-                  <option value="both">Deutsch + English</option>
-                </select>
-              </label>
-              <label className="flex-option"><input type="checkbox" name="flex-role" value="yes" /><span>{t.flex}</span></label>
-            </div>
+            {activeGame === "league" ? (
+              <>
+                <div className="form-row">
+                  <label>
+                    <span>{t.mainRole} *</span>
+                    <select
+                      name="main-role"
+                      required
+                      value={leagueMainRole}
+                      onChange={(event) => {
+                        const nextRole = event.target.value;
+                        setLeagueMainRole(nextRole);
+                        if (leagueSecondaryRole === nextRole) setLeagueSecondaryRole("");
+                      }}
+                    >
+                      <option value="" disabled>—</option>
+                      {roleOptions[language].league.map((role) => <option value={role} key={role}>{role}</option>)}
+                    </select>
+                  </label>
+                  <label>
+                    <span>{t.secondaryRole} *</span>
+                    <select name="secondary-role" required value={leagueSecondaryRole} onChange={(event) => setLeagueSecondaryRole(event.target.value)}>
+                      <option value="" disabled>—</option>
+                      {roleOptions[language].league.map((role) => <option value={role} key={role} disabled={role === leagueMainRole}>{role}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="form-row">
+                  <label><span>{t.rank} *</span><input name="rank" required placeholder={t.rankPlaceholder} /></label>
+                  <label><span>{t.peakRank} *</span><input name="peak-rank" required placeholder={t.peakRankPlaceholder} /></label>
+                </div>
+                <div className="form-row">
+                  <label><span>{t.opgg} *</span><input type="url" name="opgg-url" required placeholder={t.opggPlaceholder} inputMode="url" /></label>
+                  <label>
+                    <span>{t.languageLabel} *</span>
+                    <select name="language" required defaultValue="both">
+                      <option value="de">Deutsch</option>
+                      <option value="en">English</option>
+                      <option value="both">Deutsch + English</option>
+                    </select>
+                  </label>
+                </div>
+              </>
+            ) : (
+              <>
+                <div className="form-row">
+                  <label>
+                    <span>{t.role} *</span>
+                    <select name="preferred-role" required defaultValue="">
+                      <option value="" disabled>—</option>
+                      {roleOptions[language].valorant.map((role) => <option value={role} key={role}>{role}</option>)}
+                    </select>
+                  </label>
+                  <label><span>{t.rank} *</span><input name="rank" required placeholder={t.rankPlaceholder} /></label>
+                </div>
+                <div className="form-row">
+                  <label>
+                    <span>{t.languageLabel} *</span>
+                    <select name="language" required defaultValue="both">
+                      <option value="de">Deutsch</option>
+                      <option value="en">English</option>
+                      <option value="both">Deutsch + English</option>
+                    </select>
+                  </label>
+                  <label className="flex-option"><input type="checkbox" name="flex-role" value="yes" /><span>{t.flex}</span></label>
+                </div>
+              </>
+            )}
             <label><span>{t.note}</span><textarea name="notes" rows={3} placeholder={t.notePlaceholder} /></label>
             <label className="consent"><input type="checkbox" name="consent" required /><span>{t.consent}<br /><a href="/terms/" target="_blank">{t.terms} ↗</a> · <a href="/privacy/" target="_blank">{t.privacy} ↗</a></span></label>
             <button className="button button-submit" type="submit" disabled={submitting}>{submitting ? t.submitting : t.submit}<span>↗</span></button>

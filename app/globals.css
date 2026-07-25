@@ -306,6 +306,8 @@ footer { padding: 75px 0 24px; background: #050608; color: #f4f3ef; }
 .admin-table strong, .admin-table small { display: block; }
 .admin-table strong { color: var(--text); font-size: 13px; }
 .admin-table small { margin-top: 3px; color: var(--muted); font-size: 9px; }
+.admin-profile-link { display: block; width: fit-content; margin-top: 7px; color: var(--league); font-size: 9px; font-weight: 900; letter-spacing: .06em; text-transform: uppercase; }
+.admin-profile-link:hover { color: var(--league-bright); }
 .admin-notes { max-width: 260px; white-space: pre-wrap; line-height: 1.55; }
 .admin-table select { min-width: 126px; height: 38px; padding: 0 9px; border: 1px solid var(--line-strong); outline: 0; background: var(--bg); color: var(--text); }
 .admin-table select:focus { border-color: var(--valorant); }

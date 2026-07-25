@@ -15,7 +15,11 @@ type Applicant = {
   discordUsername: string;
   discordDisplayName: string;
   preferredRole: string;
+  mainRole: string;
+  secondaryRole: string;
   rank: string;
+  opggUrl: string;
+  peakRank: string;
   language: string;
   flexRole: boolean;
   notes: string;
@@ -90,7 +94,11 @@ export default function AdminPage() {
         applicant.playerName,
         applicant.riotId,
         applicant.preferredRole,
+        applicant.mainRole,
+        applicant.secondaryRole,
         applicant.rank,
+        applicant.peakRank,
+        applicant.opggUrl,
         applicant.team,
         applicant.discordUsername,
         applicant.contact,
@@ -124,14 +132,17 @@ export default function AdminPage() {
   }
 
   function exportTeams() {
-    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Preferred Role", "Rank", "Language", "Discord Display Name", "Discord Username", "Discord ID", "Contact Email", "Notes", "Submitted At"];
+    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Main / Preferred Role", "Secondary Role", "Current Rank", "Peak Rank", "OP.GG", "Language", "Discord Display Name", "Discord Username", "Discord ID", "Contact Email", "Notes", "Submitted At"];
     const lines = applicants.map((applicant) => [
       applicant.tournament,
       applicant.team || "Unassigned",
       applicant.playerName,
       applicant.riotId,
-      applicant.preferredRole,
+      applicant.mainRole || applicant.preferredRole,
+      applicant.secondaryRole,
       applicant.rank,
+      applicant.peakRank,
+      applicant.opggUrl,
       applicant.language,
       applicant.discordDisplayName,
       applicant.discordUsername,
@@ -221,10 +232,18 @@ export default function AdminPage() {
               <tbody>
                 {visibleApplicants.map((applicant) => (
                   <tr key={applicant.id}>
-                    <td><strong>{applicant.playerName || "—"}</strong><small>{applicant.riotId || "No Riot ID"}</small></td>
+                    <td>
+                      <strong>{applicant.playerName || "—"}</strong>
+                      <small>{applicant.riotId || "No Riot ID"}</small>
+                      {applicant.opggUrl && <a className="admin-profile-link" href={applicant.opggUrl} target="_blank" rel="noreferrer">OP.GG ↗</a>}
+                    </td>
                     <td>{new Intl.DateTimeFormat("de-DE", { dateStyle: "short", timeStyle: "short" }).format(new Date(applicant.submittedAt))}</td>
-                    <td>{applicant.preferredRole || "—"}{applicant.flexRole && <small>Flex ✓</small>}</td>
-                    <td>{applicant.rank || "—"}</td>
+                    <td>
+                      {applicant.mainRole || applicant.preferredRole || "—"}
+                      {applicant.tournament === "league" && applicant.secondaryRole && <small>Secondary: {applicant.secondaryRole}</small>}
+                      {applicant.tournament === "valorant" && applicant.flexRole && <small>Flex ✓</small>}
+                    </td>
+                    <td>{applicant.rank || "—"}{applicant.peakRank && <small>Peak: {applicant.peakRank}</small>}</td>
                     <td>{applicant.language || "—"}</td>
                     <td><strong>{applicant.discordDisplayName || `@${applicant.discordUsername}`}</strong><small>@{applicant.discordUsername} · {applicant.discordId}</small><small>{applicant.contact || "Keine E-Mail"}</small></td>
                     <td className="admin-notes">{applicant.notes || "—"}</td>

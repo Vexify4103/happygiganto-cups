@@ -9,7 +9,11 @@ export type ApplicationDocument = {
   riotId: string;
   contact: string;
   preferredRole: string;
+  mainRole?: string;
+  secondaryRole?: string;
   rank: string;
+  opggUrl?: string;
+  peakRank?: string;
   language: string;
   flexRole: boolean;
   notes: string;
