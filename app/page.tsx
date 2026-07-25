@@ -426,7 +426,7 @@ export default function Home() {
 
       <section className="application section" id="apply">
         <div className="container application-grid">
-          <div className="application-copy"><p className="section-kicker">{t.formEyebrow}</p><h2>{t.formTitle}</h2><p>{t.formIntro}</p><div className="application-dates"><div><span>22</span><div><strong>AUG</strong><small>LEAGUE OF LEGENDS</small></div></div><div><span>01</span><div><strong>SEP</strong><small>VALORANT</small></div></div></div></div>
+          <div className="application-copy"><p className="section-kicker">{t.formEyebrow}</p><h2>{t.formTitle}</h2><p>{t.formIntro}</p><div className="application-dates"><div><span>12</span><div><strong>SEP · 11:00</strong><small>LEAGUE OF LEGENDS</small></div></div><div><span>26</span><div><strong>SEP · 11:00</strong><small>VALORANT</small></div></div></div></div>
           <form className="application-form" method="POST" action="/api/apply" onSubmit={handleSubmit}>
             <p className="hidden-field"><label>Don’t fill this out: <input name="bot-field" /></label></p>
             <div className={`discord-auth-card ${discordUser ? "is-verified" : ""}`}>
