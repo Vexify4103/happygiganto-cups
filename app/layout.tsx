@@ -13,13 +13,13 @@ export const metadata: Metadata = {
     title: "HappyGiganto Community Cups 2026",
     description: "Two games. One community. Join the League of Legends and Valorant tournaments.",
     type: "website",
-    images: [{ url: "/og.png", width: 1200, height: 630, alt: "HappyGiganto Community Cups 2026" }],
+    images: [{ url: "/og.png?v=2026-09-dates", width: 1200, height: 630, alt: "HappyGiganto Community Cups 2026" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "HappyGiganto Community Cups 2026",
     description: "Two games. One community. Join the League of Legends and Valorant tournaments.",
-    images: ["/og.png"],
+    images: ["/og.png?v=2026-09-dates"],
   },
 };
 
