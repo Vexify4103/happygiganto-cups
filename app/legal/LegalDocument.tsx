@@ -53,7 +53,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "3. Team-Zuteilung",
           paragraphs: [
-            "Die Turnierleitung stellt Teams anhand der verfügbaren Anmeldungen zusammen. Dabei können insbesondere Spiel, Main Role, Secondary Role, aktueller und bisher höchster Rang sowie Sprache berücksichtigt werden. Ein Anspruch auf eine bestimmte Rolle, Teamzusammensetzung oder Mitspieler:innen besteht nicht.",
+            "Die Turnierleitung stellt Teams anhand der verfügbaren Anmeldungen zusammen. Dabei können insbesondere Spiel, Main Role, Secondary Role, aktueller und bisher höchster Rang, bevorzugte Agents sowie Sprache berücksichtigt werden. Ein Anspruch auf eine bestimmte Rolle, Teamzusammensetzung oder Mitspieler:innen besteht nicht.",
             "Die Team-Zuteilung wird über den angegebenen beziehungsweise verifizierten Kontaktkanal mitgeteilt. Kann ein vollständiges Team nicht gebildet werden, kann eine Anmeldung auf die Warteliste gesetzt oder das Teilnahmeangebot zurückgenommen werden.",
           ],
         },
@@ -135,7 +135,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "3. Team assignment",
           paragraphs: [
-            "Tournament admins assemble teams from available applicants. Game, main role, secondary role, current and peak rank, and language may be considered. Players have no right to a particular role, line-up or teammate.",
+            "Tournament admins assemble teams from available applicants. Game, main role, secondary role, current and peak rank, preferred agents, and language may be considered. Players have no right to a particular role, line-up or teammate.",
             "Assignments are communicated through the provided or verified contact channel. If a complete team cannot be formed, an applicant may be waitlisted or the participation offer may be withdrawn.",
           ],
         },
@@ -233,7 +233,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "5. Turnierbewerbung",
           paragraphs: [
-            "Bei der Bewerbung verarbeiten wir Turnierauswahl, Spielername, Riot ID, optionale E-Mail-Adresse, Main Role und Secondary Role beziehungsweise bevorzugte Rolle, aktuellen und bisher höchsten Rang, OP.GG-Profillink, Sprache, freiwillige Notizen sowie die verifizierten Discord-Daten.",
+            "Bei der Bewerbung verarbeiten wir Turnierauswahl, Spielername, Riot ID, optionale E-Mail-Adresse, Main Role und Secondary Role, aktuellen und bisher höchsten Rang, bei League den OP.GG-Profillink, bei Valorant optional die meistgespielten Agents, Sprache, freiwillige Notizen sowie die verifizierten Discord-Daten.",
             "Die Daten werden zur Prüfung der Bewerbung, Bildung ausgeglichener Teams, Kontaktaufnahme, Organisation, Durchführung, Streitklärung und Missbrauchsprävention verarbeitet. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO; Sicherheits- und Missbrauchsmaßnahmen beruhen ergänzend auf Art. 6 Abs. 1 lit. f DSGVO.",
             "Pflichtangaben sind erforderlich, um eine Bewerbung zu bearbeiten. Ohne diese Angaben ist eine Teilnahme nicht möglich. Die optionale E-Mail-Adresse und freiwillige Notizen sind nicht erforderlich.",
           ],
@@ -321,7 +321,7 @@ const documents: Record<Kind, Record<Language, Document>> = {
         {
           title: "5. Tournament applications",
           paragraphs: [
-            "We process tournament selection, player name, Riot ID, optional email, main and secondary role or preferred role, current and peak rank, OP.GG profile link, language, voluntary notes and verified Discord details.",
+            "We process tournament selection, player name, Riot ID, optional email, main and secondary role, current and peak rank, the OP.GG profile link for League, optional most-played agents for Valorant, language, voluntary notes and verified Discord details.",
             "The purposes are application review, balanced team formation, communication, organization, tournament operation, dispute resolution and abuse prevention. The legal basis is Article 6(1)(b) GDPR, supplemented by Article 6(1)(f) GDPR for security and abuse prevention.",
             "Required fields are necessary to process an application. Participation is not possible without them. Email and notes are optional.",
           ],

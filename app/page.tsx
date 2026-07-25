@@ -66,6 +66,9 @@ const copy = {
     tournament: "Turnier", playerName: "Spielername", riotId: "Riot ID",
     contact: "Kontakt-E-Mail (optional)", role: "Bevorzugte Rolle", mainRole: "Main Role", secondaryRole: "Secondary Role", rank: "Aktueller Rang",
     opgg: "OP.GG-Profil", peakRank: "Bisher höchster Rang (Peak)",
+    mostPlayedAgents: "Meistgespielte Agents (optional)",
+    agentPickerEmpty: "Agents auswählen",
+    agentPickerHint: "Wähle alle Agents aus, die du regelmäßig spielst.",
     languageLabel: "Bevorzugte Sprache", flex: "Ich kann bei Bedarf auch eine andere Rolle spielen.",
     note: "Noch etwas, das wir wissen sollten?",
     consent: "Ich habe die Teilnahmebedingungen und Datenschutzerklärung gelesen und akzeptiere die Teilnahmebedingungen.",
@@ -145,6 +148,9 @@ const copy = {
     tournament: "Tournament", playerName: "Player name", riotId: "Riot ID",
     contact: "Contact email (optional)", role: "Preferred role", mainRole: "Main role", secondaryRole: "Secondary role", rank: "Current rank",
     opgg: "OP.GG profile", peakRank: "Peak rank",
+    mostPlayedAgents: "Most played agents (optional)",
+    agentPickerEmpty: "Select agents",
+    agentPickerHint: "Select every agent you regularly play.",
     languageLabel: "Preferred language", flex: "I can play another role if needed.",
     note: "Anything else we should know?",
     consent: "I have read the Terms of Participation and Privacy Policy and accept the Terms of Participation.",
@@ -182,13 +188,19 @@ const eventData = {
 const roleOptions = {
   de: {
     league: ["Top", "Jungle", "Mid", "ADC", "Support"],
-    valorant: ["Duelist", "Initiator", "Controller", "Sentinel", "Flex"],
+    valorant: ["Duelist", "Initiator", "Controller", "Sentinel"],
   },
   en: {
     league: ["Top", "Jungle", "Mid", "ADC", "Support"],
-    valorant: ["Duelist", "Initiator", "Controller", "Sentinel", "Flex"],
+    valorant: ["Duelist", "Initiator", "Controller", "Sentinel"],
   },
 } as const;
+
+const valorantAgents = [
+  "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher", "Deadlock", "Fade", "Gekko", "Harbor",
+  "Iso", "Jett", "KAY/O", "Killjoy", "Miks", "Neon", "Omen", "Phoenix", "Raze", "Reyna", "Sage", "Skye",
+  "Sova", "Tejo", "Veto", "Viper", "Vyse", "Waylay", "Yoru",
+] as const;
 
 export default function Home() {
   const [language, setLanguage] = useState<Language>("de");
@@ -196,6 +208,9 @@ export default function Home() {
   const [activeGame, setActiveGame] = useState<Game>("league");
   const [leagueMainRole, setLeagueMainRole] = useState("");
   const [leagueSecondaryRole, setLeagueSecondaryRole] = useState("");
+  const [valorantMainRole, setValorantMainRole] = useState("");
+  const [valorantSecondaryRole, setValorantSecondaryRole] = useState("");
+  const [selectedValorantAgents, setSelectedValorantAgents] = useState<string[]>([]);
   const [menuOpen, setMenuOpen] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [discordUser, setDiscordUser] = useState<DiscordUser | null>(null);
@@ -514,13 +529,32 @@ export default function Home() {
               <>
                 <div className="form-row">
                   <label>
-                    <span>{t.role} *</span>
-                    <select name="preferred-role" required defaultValue="">
+                    <span>{t.mainRole} *</span>
+                    <select
+                      name="main-role"
+                      required
+                      value={valorantMainRole}
+                      onChange={(event) => {
+                        const nextRole = event.target.value;
+                        setValorantMainRole(nextRole);
+                        if (valorantSecondaryRole === nextRole) setValorantSecondaryRole("");
+                      }}
+                    >
                       <option value="" disabled>—</option>
                       {roleOptions[language].valorant.map((role) => <option value={role} key={role}>{role}</option>)}
                     </select>
                   </label>
+                  <label>
+                    <span>{t.secondaryRole} *</span>
+                    <select name="secondary-role" required value={valorantSecondaryRole} onChange={(event) => setValorantSecondaryRole(event.target.value)}>
+                      <option value="" disabled>—</option>
+                      {roleOptions[language].valorant.map((role) => <option value={role} key={role} disabled={role === valorantMainRole}>{role}</option>)}
+                    </select>
+                  </label>
+                </div>
+                <div className="form-row">
                   <label><span>{t.rank} *</span><input name="rank" required placeholder={t.rankPlaceholder} /></label>
+                  <label><span>{t.peakRank} *</span><input name="peak-rank" required placeholder={t.peakRankPlaceholder} /></label>
                 </div>
                 <div className="form-row">
                   <label>
@@ -531,7 +565,27 @@ export default function Home() {
                       <option value="both">Deutsch + English</option>
                     </select>
                   </label>
-                  <label className="flex-option"><input type="checkbox" name="flex-role" value="yes" /><span>{t.flex}</span></label>
+                  <div className="agent-field">
+                    <span>{t.mostPlayedAgents}</span>
+                    <details className="agent-picker">
+                      <summary>{selectedValorantAgents.length ? selectedValorantAgents.join(", ") : t.agentPickerEmpty}</summary>
+                      <div className="agent-picker-options">
+                        {valorantAgents.map((agent) => (
+                          <label key={agent}>
+                            <input
+                              type="checkbox"
+                              name="most-played-agents"
+                              value={agent}
+                              checked={selectedValorantAgents.includes(agent)}
+                              onChange={() => setSelectedValorantAgents((current) => current.includes(agent) ? current.filter((item) => item !== agent) : [...current, agent])}
+                            />
+                            <span>{agent}</span>
+                          </label>
+                        ))}
+                      </div>
+                    </details>
+                    <small>{t.agentPickerHint}</small>
+                  </div>
                 </div>
               </>
             )}

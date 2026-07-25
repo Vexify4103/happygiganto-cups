@@ -14,6 +14,7 @@ export type ApplicationDocument = {
   rank: string;
   opggUrl?: string;
   peakRank?: string;
+  mostPlayedAgents?: string[];
   language: string;
   flexRole: boolean;
   notes: string;

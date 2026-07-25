@@ -212,6 +212,7 @@ button { color: inherit; }
 .hidden-field { position: absolute; left: -9999px; }
 .application-fields { min-width: 0; margin: 0; padding: 0; border: 0; }
 .application-fields:disabled { opacity: .42; }
+.application-fields:disabled .agent-picker { pointer-events: none; }
 .discord-auth-card { margin-bottom: 28px; padding: 18px; display: grid; grid-template-columns: 52px 1fr auto; gap: 15px; align-items: center; border: 1px solid color-mix(in srgb, var(--violet) 55%, var(--line)); background: color-mix(in srgb, var(--violet) 9%, var(--surface)); }
 .discord-auth-card.is-verified { border-color: color-mix(in srgb, var(--green) 55%, var(--line)); background: color-mix(in srgb, var(--green) 7%, var(--surface)); }
 .discord-avatar { width: 52px; height: 52px; display: grid; place-items: center; border: 1px solid color-mix(in srgb, var(--violet) 65%, var(--line)); border-radius: 50%; background: var(--violet) center / cover no-repeat; color: white; font-size: 19px; font-weight: 900; }
@@ -233,6 +234,20 @@ button { color: inherit; }
 .application-form input:focus, .application-form select:focus, .application-form textarea:focus { border-color: var(--valorant); box-shadow: 0 0 0 2px color-mix(in srgb, var(--valorant) 16%, transparent); }
 .application-form input::placeholder, .application-form textarea::placeholder { color: color-mix(in srgb, var(--muted) 70%, transparent); }
 .application-form label small { display: block; margin-top: 7px; color: var(--muted); font-size: 10px; }
+.agent-field { min-width: 0; margin-bottom: 22px; }
+.agent-field > span:first-child { display: block; margin-bottom: 8px; font-size: 10px; font-weight: 900; letter-spacing: .08em; text-transform: uppercase; }
+.agent-field > small { display: block; margin-top: 7px; color: var(--muted); font-size: 10px; }
+.agent-picker { position: relative; }
+.agent-picker summary { position: relative; height: 48px; padding: 0 38px 0 13px; display: flex; align-items: center; overflow: hidden; border: 1px solid var(--line-strong); background: var(--surface); color: var(--text); cursor: pointer; font-size: 11px; text-overflow: ellipsis; white-space: nowrap; list-style: none; }
+.agent-picker summary::-webkit-details-marker { display: none; }
+.agent-picker summary::after { content: "⌄"; position: absolute; right: 14px; color: var(--muted); font-size: 14px; }
+.agent-picker[open] summary { border-color: var(--valorant); }
+.agent-picker[open] summary::after { transform: rotate(180deg); }
+.agent-picker-options { position: absolute; z-index: 30; top: calc(100% + 5px); left: 0; right: 0; max-height: 260px; padding: 9px; display: grid; grid-template-columns: 1fr 1fr; gap: 3px; overflow-y: auto; border: 1px solid var(--line-strong); background: var(--surface-2); box-shadow: var(--shadow); }
+.application-form .agent-picker-options label { min-width: 0; margin: 0; padding: 8px; display: flex; align-items: center; gap: 8px; cursor: pointer; }
+.application-form .agent-picker-options label:hover { background: var(--surface-3); }
+.application-form .agent-picker-options input { width: 15px; height: 15px; padding: 0; flex: 0 0 auto; accent-color: var(--valorant); }
+.application-form .agent-picker-options label > span:first-child { display: inline; margin: 0; overflow: hidden; font-size: 10px; font-weight: 700; letter-spacing: 0; text-overflow: ellipsis; text-transform: none; white-space: nowrap; }
 .application-form .consent { display: grid; grid-template-columns: 17px 1fr; gap: 11px; align-items: start; color: var(--muted); font-size: 11px; line-height: 1.55; }
 .application-form .consent input { width: 17px; height: 17px; margin: 1px 0 0; accent-color: var(--valorant); }
 .application-form .consent span { margin: 0; font-size: inherit; font-weight: 400; letter-spacing: normal; text-transform: none; }

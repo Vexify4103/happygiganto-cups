@@ -7,7 +7,12 @@ const requiredFields = ["tournament", "player-name", "riot-id", "rank", "languag
 const tournaments = new Set<Tournament>(["league", "valorant"]);
 const languages = new Set(["de", "en", "both"]);
 const leagueRoles = new Set(["Top", "Jungle", "Mid", "ADC", "Support"]);
-const valorantRoles = new Set(["Duelist", "Initiator", "Controller", "Sentinel", "Flex"]);
+const valorantRoles = new Set(["Duelist", "Initiator", "Controller", "Sentinel"]);
+const valorantAgents = new Set([
+  "Astra", "Breach", "Brimstone", "Chamber", "Clove", "Cypher", "Deadlock", "Fade", "Gekko", "Harbor",
+  "Iso", "Jett", "KAY/O", "Killjoy", "Miks", "Neon", "Omen", "Phoenix", "Raze", "Reyna", "Sage", "Skye",
+  "Sova", "Tejo", "Veto", "Viper", "Vyse", "Waylay", "Yoru",
+]);
 
 function field(formData: FormData, name: string, maxLength: number): string {
   return String(formData.get(name) || "").trim().slice(0, maxLength);
@@ -36,9 +41,13 @@ const handler = async (request: Request) => {
   const peakRank = field(incoming, "peak-rank", 80);
   const mainRole = field(incoming, "main-role", 80);
   const secondaryRole = field(incoming, "secondary-role", 80);
-  const preferredRole = field(incoming, "preferred-role", 80);
+  const mostPlayedAgents = [...new Set(incoming.getAll("most-played-agents")
+    .map((value) => String(value).trim().slice(0, 80))
+    .filter(Boolean))];
+  if (!peakRank) return json({ error: "Peak rank is required." }, 400);
+
   if (tournament === "league") {
-    if (!opggUrl || !peakRank) return json({ error: "OP.GG profile and peak rank are required for League." }, 400);
+    if (!opggUrl) return json({ error: "OP.GG profile is required for League." }, 400);
     if (!leagueRoles.has(mainRole) || !leagueRoles.has(secondaryRole) || mainRole === secondaryRole) {
       return json({ error: "Valid and different main and secondary roles are required for League." }, 400);
     }
@@ -51,8 +60,13 @@ const handler = async (request: Request) => {
     } catch {
       return json({ error: "Invalid OP.GG profile URL." }, 400);
     }
-  } else if (!valorantRoles.has(preferredRole)) {
-    return json({ error: "A valid preferred role is required for Valorant." }, 400);
+  } else {
+    if (!valorantRoles.has(mainRole) || !valorantRoles.has(secondaryRole) || mainRole === secondaryRole) {
+      return json({ error: "Valid and different main and secondary roles are required for Valorant." }, 400);
+    }
+    if (mostPlayedAgents.some((agent) => !valorantAgents.has(agent))) {
+      return json({ error: "Invalid Valorant agent selection." }, 400);
+    }
   }
 
   const now = new Date();
@@ -63,14 +77,15 @@ const handler = async (request: Request) => {
       playerName: field(incoming, "player-name", 120),
       riotId: field(incoming, "riot-id", 120),
       contact: field(incoming, "contact", 254).toLowerCase(),
-      preferredRole: tournament === "league" ? mainRole : preferredRole,
-      mainRole: tournament === "league" ? mainRole : "",
-      secondaryRole: tournament === "league" ? secondaryRole : "",
+      preferredRole: mainRole,
+      mainRole,
+      secondaryRole,
       rank: field(incoming, "rank", 80),
       opggUrl: tournament === "league" ? opggUrl : "",
-      peakRank: tournament === "league" ? peakRank : "",
+      peakRank,
+      mostPlayedAgents: tournament === "valorant" ? mostPlayedAgents : [],
       language,
-      flexRole: tournament === "valorant" && field(incoming, "flex-role", 10) === "yes",
+      flexRole: false,
       notes: field(incoming, "notes", 2_000),
       consentAt: now,
       discord: {

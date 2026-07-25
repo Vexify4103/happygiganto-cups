@@ -20,6 +20,7 @@ type Applicant = {
   rank: string;
   opggUrl: string;
   peakRank: string;
+  mostPlayedAgents: string[];
   language: string;
   flexRole: boolean;
   notes: string;
@@ -99,6 +100,7 @@ export default function AdminPage() {
         applicant.rank,
         applicant.peakRank,
         applicant.opggUrl,
+        applicant.mostPlayedAgents.join(" "),
         applicant.team,
         applicant.discordUsername,
         applicant.contact,
@@ -132,7 +134,8 @@ export default function AdminPage() {
   }
 
   function exportTeams() {
-    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Main / Preferred Role", "Secondary Role", "Current Rank", "Peak Rank", "OP.GG", "Language", "Discord Display Name", "Discord Username", "Discord ID", "Contact Email", "Notes", "Submitted At"];
+    const delimiter = ";";
+    const header = ["Tournament", "Team", "Player Name", "Riot ID", "Main Role", "Secondary Role", "Most Played Agents", "Current Rank", "Peak Rank", "OP.GG", "Language", "Discord Display Name", "Discord Username", "Discord ID", "Contact Email", "Notes", "Submitted At"];
     const lines = applicants.map((applicant) => [
       applicant.tournament,
       applicant.team || "Unassigned",
@@ -140,6 +143,7 @@ export default function AdminPage() {
       applicant.riotId,
       applicant.mainRole || applicant.preferredRole,
       applicant.secondaryRole,
+      applicant.mostPlayedAgents.join(" | "),
       applicant.rank,
       applicant.peakRank,
       applicant.opggUrl,
@@ -150,8 +154,8 @@ export default function AdminPage() {
       applicant.contact,
       applicant.notes,
       applicant.submittedAt,
-    ].map(csvValue).join(","));
-    const csv = `\uFEFF${header.map(csvValue).join(",")}\n${lines.join("\n")}`;
+    ].map(csvValue).join(delimiter));
+    const csv = `\uFEFFsep=${delimiter}\r\n${header.map(csvValue).join(delimiter)}\r\n${lines.join("\r\n")}`;
     const url = URL.createObjectURL(new Blob([csv], { type: "text/csv;charset=utf-8" }));
     const link = document.createElement("a");
     link.href = url;
@@ -241,7 +245,8 @@ export default function AdminPage() {
                     <td>
                       {applicant.mainRole || applicant.preferredRole || "—"}
                       {applicant.tournament === "league" && applicant.secondaryRole && <small>Secondary: {applicant.secondaryRole}</small>}
-                      {applicant.tournament === "valorant" && applicant.flexRole && <small>Flex ✓</small>}
+                      {applicant.tournament === "valorant" && applicant.secondaryRole && <small>Secondary: {applicant.secondaryRole}</small>}
+                      {applicant.tournament === "valorant" && applicant.mostPlayedAgents.length > 0 && <small>Agents: {applicant.mostPlayedAgents.join(", ")}</small>}
                     </td>
                     <td>{applicant.rank || "—"}{applicant.peakRank && <small>Peak: {applicant.peakRank}</small>}</td>
                     <td>{applicant.language || "—"}</td>
