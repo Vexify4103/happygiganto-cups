@@ -20,3 +20,34 @@
     X-Frame-Options = "SAMEORIGIN"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Robots-Tag = "noindex, follow"
+
+[[redirects]]
+  from = "/admin/*"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/me/*"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/danke/*"
+  to = "/"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/privacy/*"
+  to = "https://happygiganto.de/privacy"
+  status = 301
+  force = true
+
+[[redirects]]
+  from = "/terms/*"
+  to = "https://happygiganto.de/terms"
+  status = 301
+  force = true
